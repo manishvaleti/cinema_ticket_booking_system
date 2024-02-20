@@ -11,3 +11,147 @@ code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
     monospace;
 }
+
+/*-----------------------------------Navbar section below-----------------------------*/
+.navbar {
+  background-color: #000;
+  color: #fff;
+  padding: 10px 0;
+}
+
+.container {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.navbar-brand {
+  font-size: 1.8rem;
+  text-decoration: none;
+  color: #fff;
+  margin-left: 30px;
+}
+
+.navbar-buttons .btn {
+  margin-left: 3px;
+  margin-right: 30px;
+}
+
+.btn {
+  padding: 8px 16px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.btn-signup {
+  background-color: #000;
+  color: #fff;
+  text-decoration: none;
+  border-radius: 60px;
+}
+
+.btn-signup:hover {
+  color: #0769d1;
+  transition: color 0.3s ease;
+}
+
+.btn-login {
+  background-color: #000;
+  color: #fff;
+  text-decoration: none;
+  border-radius: 60px;
+}
+
+.btn-login:hover {
+  color: #0769d1;
+  transition: color 0.3s ease;
+}
+
+/*-------------------------------Registration Section Below------------------------*/
+
+.registration-form {
+  background-color: #002147;
+  padding: 180px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.registration-form h1{
+  color: white;
+}
+
+.input-list {
+  display: flex;
+  flex-direction: column;
+  width: 300px;
+}
+
+.input-list input {
+  background-color: #fff;
+  padding: 10px;
+  margin-bottom: 10px;
+  border: none;
+  border-radius: 5px;
+}
+
+.input-list input[type="file"] {
+  margin-bottom: 10px;
+}
+
+.input-list label {
+  color: #fff;
+  margin-bottom: 10px;
+}
+
+.input-list input[type="checkbox"] {
+  margin-right: 10px;
+}
+
+.registration-form button {
+  background-color: #fff;
+  color: #333;
+  padding: 10px 20px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  margin-top: 20px;
+}
+
+.registration-form button:hover {
+  background-color: #ccc;
+}
+
+
+/*----------------------------------Login Section------------------------------*/
+
+.login-form {
+  background-color: #002147;
+  padding: 268px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.login-form button {
+  background-color: #fff;
+  color: #333;
+  padding: 10px 20px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  margin-top: 20px;
+}
+
+.login-form h1{
+  color: white;
+}
+
+.form-group{
+  display: flex;
+  flex-direction: column;
+  width: 300px;
+}
+
+
