@@ -1,8 +1,9 @@
 import React, { useState } from 'react';
 import axios from 'axios';
+import { Link } from 'react-router-dom';
 import Navbar from './Navbar';
 
-function Registration() {
+function Login() {
     const [formData, setFormData] = useState({
         username: '',
         email: '',
@@ -31,16 +32,7 @@ function Registration() {
         try {
             const userData = new FormData();
             userData.append('username', formData.username);
-            userData.append('email', formData.email);
             userData.append('password', formData.password);
-            userData.append('address', formData.address);
-            userData.append('phone_number', formData.phoneNumber);
-            userData.append('photo', formData.photo);
-            if (formData.provideCreditCardDetails) {
-                userData.append('credit_card_number', formData.creditCardNumber);
-                userData.append('credit_card_expiry', formData.creditCardExpiry);
-                userData.append('credit_card_cvv', formData.creditCardCVV);
-            }
 
             const response = await axios.post('http://127.0.0.1:8000/api/register/', userData);
             console.log(response.data); // Response from Django backend
@@ -53,25 +45,13 @@ function Registration() {
     return (
         <><div /><Navbar />
         
-        <div class="registration-form">
-            <h1>User Registration</h1>
+        <div class="login-form">
+            <h1>User Login</h1>
             <div class="input-list">
-                <input type="text" name="username" placeholder="Username" value={formData.username} onChange={handleChange} />
+                
                 <input type="email" name="email" placeholder="Email" value={formData.email} onChange={handleChange} />
                 <input type="password" name="password" placeholder="Password" value={formData.password} onChange={handleChange} />
-                <input type="text" name="address" placeholder="Address" value={formData.address} onChange={handleChange} />
-                <input type="text" name="phoneNumber" placeholder="Phone Number" value={formData.phoneNumber} onChange={handleChange} />
-                <input type="file" name="photo" onChange={handleChange} />
-                <div>
-                    <label>
-                        Provide Credit Card Details:
-                        <input
-                            type="checkbox"
-                            name="provideCreditCardDetails"
-                            checked={formData.provideCreditCardDetails}
-                            onChange={handleChange} />
-                    </label>
-                </div>
+
                 {formData.provideCreditCardDetails && (
                     <div>
                         <input type="text" name="creditCardNumber" placeholder="Credit Card Number" value={formData.creditCardNumber} onChange={handleChange} />
@@ -80,7 +60,12 @@ function Registration() {
                     </div>
                 )}
             </div>
-            <button type="submit">Register</button>
+            <button type="submit">Login</button>
+            <p>
+                <span style={{ color: 'white' }}>Don't have an account?</span> {' '}
+                <Link to="/register" className="btn btn-login mr-2" >Register</Link>
+
+            </p>
         </div>
         
     </>
@@ -88,4 +73,4 @@ function Registration() {
     );
 }
 
-export default Registration;
+export default Login;
