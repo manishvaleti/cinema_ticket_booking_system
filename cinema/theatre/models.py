@@ -14,12 +14,22 @@ class User(AbstractUser):
     user_permissions = models.ManyToManyField(Permission, related_name='custom_user_permission_set')
 
 class Movie(models.Model):
+    GENRE_CHOICES = [
+        ('none', 'None'), 
+        ('action', 'Action'),
+        ('comedy', 'Comedy'),
+        ('drama', 'Drama'),
+        ('horror', 'Horror'),
+        ('romance', 'Romance'),
+        ('sci-fi', 'Science Fiction'),
+    ]
     title = models.CharField(max_length=100)
     description = models.TextField()
     release_date = models.DateField()
     duration = models.IntegerField()  # Duration in minutes
     trailer_url = models.URLField(blank=True)
     image = models.ImageField(upload_to='movie_images/', null=True, blank=True)
+    genre = models.CharField(max_length=100, choices=GENRE_CHOICES, default='none')
 
 class Screen(models.Model):
     name = models.CharField(max_length=100)
