@@ -1,6 +1,8 @@
 import React, { useState } from 'react';
 import axios from 'axios';
 import Navbar from './Navbar';
+import { Link } from 'react-router-dom';
+
 
 function Registration() {
     const [formData, setFormData] = useState({
@@ -15,7 +17,6 @@ function Registration() {
         creditCardExpiry: '',
         creditCardCVV: ''
     });
-
     const handleChange = (e) => {
         if (e.target.name === 'photo') {
             setFormData({ ...formData, photo: e.target.files[0] });
@@ -25,7 +26,6 @@ function Registration() {
             setFormData({ ...formData, [e.target.name]: e.target.value });
         }
     };
-
     const handleSubmit = async (e) => {
         e.preventDefault();
         try {
@@ -41,15 +41,12 @@ function Registration() {
                 userData.append('credit_card_expiry', formData.creditCardExpiry);
                 userData.append('credit_card_cvv', formData.creditCardCVV);
             }
-
-            const response = await axios.post('http://127.0.0.1:8000/register/', userData);
+            const response = await axios.post('http://127.0.0.1:8000/api/register/', userData);
             console.log(response.data); // Response from Django backend
-
         } catch (error) {
             console.error('Error:', error);
         }
     };
-
     return (
         <><div /><Navbar />
         
@@ -81,11 +78,11 @@ function Registration() {
                 )}
             </div>
             <button type="submit">Register</button>
+
         </div>
-        
+
     </>
         
     );
 }
-
 export default Registration;
