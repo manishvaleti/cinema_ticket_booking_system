@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
-
+import Navbar from './Navbar';
 
 function MovieList() {
   const [movies, setMovies] = useState([]);
@@ -97,6 +97,8 @@ function MovieList() {
 
   return (
     <div>
+      <Navbar></Navbar>
+      <div  className="home">
       <h2>Filter by Genre</h2>
       <select onChange={handleGenreFilter} value={selectedGenre}>
         <option value="all">All Genres</option>
@@ -111,62 +113,52 @@ function MovieList() {
 
       <h2>Now Showing</h2>
       {nowShowing.length > 0 ? (
-        <ul>
+        <div className='movie-container'>
           {nowShowing.map(movie => (
-            <li key={movie.id}>
-            <strong>Title:</strong> {movie.title}<br />
+            <a href={`/movies/${movie.id}`} className='movie-card' key={movie.id} style={{ backgroundImage: `url(http://127.0.0.1:8000${movie.image})` }} data-title={movie.title}>
+            <div className='movie-card' style={{ width: '150px', height: '200px', backgroundColor: 'gray', display: 'flex', justifyContent: 'center', alignItems: 'center', color: 'white' }}
+            key={movie.id}>
+            {/* <strong>Title:</strong> {movie.title}<br />
             <strong>Description:</strong> {movie.description}<br />
             <strong>Release Date:</strong> {movie.release_date}<br />
             <strong>Duration:</strong> {movie.duration} minutes<br />
             <strong>Genre:</strong> {movie.genre}<br />
-            <strong>Trailer URL:</strong> <a href={movie.trailer_url}>{movie.trailer_url}</a><br />
-            <strong>Image:</strong> <img height="50px" width="50px" src={`http://127.0.0.1:8000${movie.image}`} alt="Movie Poster" /><br />
-            <button onClick={() => handleMoreInfo(movie.id)}>Know More </button>
-          </li> 
+            <strong>Trailer URL:</strong> <a href={movie.trailer_url}>{movie.trailer_url}</a><br /> */}
+            <img height="50px" width="50px" src={`http://127.0.0.1:8000${movie.image}`} alt="Movie Poster" /><br />
+            {/* <button onClick={() => handleMoreInfo(movie.id)}>Know More </button> */}
+          </div> 
+          </a>
           ))}
-        </ul>
+        </div>
       ) : (
         <p>No movies available</p>
       )}
 
       <h2>Upcoming Movies</h2>
       {upcoming.length > 0 ? (
-        <ul>
+        <div>
           {upcoming.map(movie => (
-            <li key={movie.id}>
-            <strong>Title:</strong> {movie.title}<br />
+            <a href={`/movies/${movie.id}`} className='movie-card' key={movie.id} style={{ backgroundImage: `url(http://127.0.0.1:8000${movie.image})` }} data-title={movie.title}>
+            <div  className='movie-card'  style={{ width: '150px', height: '200px', backgroundColor: 'gray', display: 'flex', justifyContent: 'center', alignItems: 'center', color: 'white' }}
+             key={movie.id}>
+            {/* <strong>Title:</strong> {movie.title}<br />
             <strong>Description:</strong> {movie.description}<br />
             <strong>Release Date:</strong> {movie.release_date}<br />
             <strong>Duration:</strong> {movie.duration} minutes<br />
             <strong>Genre:</strong> {movie.genre}<br />
-            <strong>Trailer URL:</strong> <a href={movie.trailer_url}>{movie.trailer_url}</a><br />
-            <strong>Image:</strong> <img height="50px" width="50px" src={`http://127.0.0.1:8000${movie.image}`} alt="Movie Poster" /><br />
-            <button onClick={() => handleMoreInfo(movie.id)}>Know More </button>
-          </li> 
+            <strong>Trailer URL:</strong> <a href={movie.trailer_url}>{movie.trailer_url}</a><br /> */}
+            <img height="50px" width="50px" src={`http://127.0.0.1:8000${movie.image}`} alt="Movie Poster" /><br />
+            {/* <button onClick={() => handleMoreInfo(movie.id)}>Know More </button> */}
+          </div> 
+          </a>
           ))}
-        </ul>
+      </div>
       ) : (
         <p>No movies available</p>
       )}
+      </div>
     </div>
   );
 }
 
 export default MovieList;
-
-
-
-
-
-
-
-{/* <li key={movie.id}>
-            <strong>Title:</strong> {movie.title}<br />
-            <strong>Description:</strong> {movie.description}<br />
-            <strong>Release Date:</strong> {movie.release_date}<br />
-            <strong>Duration:</strong> {movie.duration} minutes<br />
-            <strong>Genre:</strong> {movie.genre}<br />
-            <strong>Trailer URL:</strong> <a href={movie.trailer_url}>{movie.trailer_url}</a><br />
-            <strong>Image:</strong> <img height="50px" width="50px" src={`http://127.0.0.1:8000${movie.image}`} alt="Movie Poster" /><br />
-            <button onClick={() => handleMoreInfo(movie.id)}>Know More </button>
-          </li> */}

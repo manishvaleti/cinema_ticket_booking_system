@@ -86,7 +86,7 @@ DATABASES = {
         'ENGINE': 'django.db.backends.mysql',
         'NAME': 'cinema_tickets',
         'USER': 'root',
-        'PASSWORD': '12345678',
+        'PASSWORD': 'Golf01er*',
         'HOST': 'localhost',
         'PORT': '3306',
     }
