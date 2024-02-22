@@ -155,18 +155,3 @@ function MovieList() {
 export default MovieList;
 
 
-
-
-
-
-
-{/* <li key={movie.id}>
-            <strong>Title:</strong> {movie.title}<br />
-            <strong>Description:</strong> {movie.description}<br />
-            <strong>Release Date:</strong> {movie.release_date}<br />
-            <strong>Duration:</strong> {movie.duration} minutes<br />
-            <strong>Genre:</strong> {movie.genre}<br />
-            <strong>Trailer URL:</strong> <a href={movie.trailer_url}>{movie.trailer_url}</a><br />
-            <strong>Image:</strong> <img height="50px" width="50px" src={`http://127.0.0.1:8000${movie.image}`} alt="Movie Poster" /><br />
-            <button onClick={() => handleMoreInfo(movie.id)}>Know More </button>
-          </li> */}

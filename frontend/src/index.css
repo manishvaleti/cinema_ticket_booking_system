@@ -124,6 +124,7 @@ code {
 }
 
 
+
 /*----------------------------------Login Section------------------------------*/
 
 .login-form {
@@ -154,4 +155,15 @@ code {
   width: 300px;
 }
 
+/*--------------------------Account Created Page-----------------*/
+.account-form {
+  background-color: #002147;
+  padding: 327px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+.account-form h1{
+  color: white;
+}
 
