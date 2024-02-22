@@ -42,7 +42,7 @@ function Registration() {
                 userData.append('credit_card_cvv', formData.creditCardCVV);
             }
 
-            const response = await axios.post('http://127.0.0.1:8000/api/register/', userData);
+            const response = await axios.post('http://127.0.0.1:8000/register/', userData);
             console.log(response.data); // Response from Django backend
 
         } catch (error) {

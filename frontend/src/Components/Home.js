@@ -158,6 +158,7 @@ function MovieList() {
       )}
       </div>
     </div>
+    </div>
   );
 }
 

@@ -3,9 +3,14 @@ import Registration from './Components/Registration';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom'; // Update import statement
 import UserList from './Components/UserList';
 import Home from './Components/Home'; // Assuming you have a Home component for the homepage
+<<<<<<< HEAD
 import MovieDetails from './Components/movieInd';
 import Login from './Components/Login';
 
+=======
+import MovieDetails from './Components/movieInd'
+import Login from './Components/Login'
+>>>>>>> f182f64 (next update)
 function App() {
   return (
     <Router>
