@@ -43,13 +43,19 @@ function extractYouTubeVideoId(url) {
     const videoId = extractYouTubeVideoId(movie.trailer_url);
   
     return (
-      <div>
+      <div className="movie-details">
         <h2>{movie.title}</h2>
+        <div className="details-container">
+        <div className="image-container">
+        <img height="315px" width="560px" src={`http://127.0.0.1:8000${movie.image}`} alt="Movie Poster" /><br />
+        </div>
+        <div className="des-container">
         <p><strong>Description:</strong> {movie.description}</p>
         <p><strong>Release Date:</strong> {movie.release_date}</p>
         <p><strong>Duration:</strong> {movie.duration} minutes</p>
         <p><strong>Genre:</strong> {movie.genre}</p>
-        <img height="315px" width="560px" src={`http://127.0.0.1:8000${movie.image}`} alt="Movie Poster" /><br />
+        </div>
+        </div>
         <div>
           <iframe
             width="560"
