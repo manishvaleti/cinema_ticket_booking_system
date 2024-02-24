@@ -28,7 +28,6 @@ function Registration() {
             setFormData({ ...formData, [e.target.name]: e.target.value });
         }
     };
-
     const handleSubmit = async (e) => {
         e.preventDefault();
         try {
@@ -44,7 +43,6 @@ function Registration() {
                 userData.append('credit_card_expiry', formData.creditCardExpiry);
                 userData.append('credit_card_cvv', formData.creditCardCVV);
             }
-
             const response = await axios.post('http://127.0.0.1:8000/api/register/', userData);
             console.log(response.data); // Response from Django backend
 
@@ -54,7 +52,6 @@ function Registration() {
             console.error('Error:', error);
         }
     };
-
     return (
         <><div /><Navbar />
         
@@ -87,10 +84,9 @@ function Registration() {
             </div>
             <button type="submit" onClick={handleSubmit}>Register</button>
         </div>
-        
+
     </>
         
     );
 }
-
 export default Registration;

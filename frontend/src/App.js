@@ -20,6 +20,7 @@ function App() {
         <Route path="/Register" element={<Registration />} />
         <Route path="/movies/:movieId/" element={<MovieDetails />} />
         <Route path="/AccountCreatedPage" element={<AccountCreatedPage />} />
+        <Route path="/AccountCreatedPage" element={<AccountCreatedPage />} />
         <Route path="/EditProfile" element={<EditProfile/>}/>
         <Route path="/BookMovies" element={<BookMovies/>}/>
         <Route path="/OrderSummary" element={<OrderSummary/>}/>
@@ -29,5 +30,4 @@ function App() {
     </Router>
   );
 }
-
 export default App;
