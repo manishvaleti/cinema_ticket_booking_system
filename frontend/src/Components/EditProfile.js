@@ -3,7 +3,7 @@ import axios from 'axios';
 import Navbar from './Navbar';
 import { useNavigate } from 'react-router-dom';
 
-function Registration() {
+function EditProfile() {
     const [formData, setFormData] = useState({
         username: '',
         email: '',
@@ -59,7 +59,7 @@ function Registration() {
         <><div /><Navbar />
         
         <div class="registration-form">
-            <h1>User Registration</h1>
+            <h1>Edit Profile</h1>
             <div class="input-list">
                 <input type="text" name="username" placeholder="Username" value={formData.username} onChange={handleChange} />
                 <input type="email" name="email" placeholder="Email" value={formData.email} onChange={handleChange} />
@@ -69,7 +69,7 @@ function Registration() {
                 <input type="file" name="photo" onChange={handleChange} />
                 <div>
                     <label>
-                        Provide Credit Card Details:
+                        Change Credit Card Details:
                         <input
                             type="checkbox"
                             name="provideCreditCardDetails"
@@ -85,7 +85,7 @@ function Registration() {
                     </div>
                 )}
             </div>
-            <button type="submit" onClick={handleSubmit}>Register</button>
+            <button type="submit" onClick={handleSubmit}>Submit Changes</button>
         </div>
         
     </>
@@ -93,4 +93,4 @@ function Registration() {
     );
 }
 
-export default Registration;
+export default EditProfile;

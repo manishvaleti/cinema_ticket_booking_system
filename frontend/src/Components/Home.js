@@ -105,7 +105,9 @@ function MovieList() {
         <option value="action">Action</option>
         <option value="comedy">Comedy</option>
         <option value="drama">Drama</option>
-        {/* Add more genre options as needed */}
+        <option value="horror">Horror</option>
+        <option value="romance">Romance</option>
+        <option value="science fiction">Science Fiction</option>
       </select>
 
       <h2>Search</h2>

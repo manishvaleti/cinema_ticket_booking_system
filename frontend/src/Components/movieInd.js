@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { useLocation } from 'react-router-dom'; // Import useParams hook
+import Navbar from './Navbar';
+import { useNavigate } from 'react-router-dom';
 
 function extractYouTubeVideoId(url) {
     // Regular expression to match YouTube video IDs in various URL formats
@@ -17,6 +19,7 @@ function extractYouTubeVideoId(url) {
   
 
   function MovieDetails() {
+    const navigate = useNavigate();
     const [movie, setMovie] = useState(null);
     const location = useLocation(); // Get current location
     const movieId = location.pathname.split('/').pop(); // Extract movieId from URL path
@@ -41,10 +44,19 @@ function extractYouTubeVideoId(url) {
   
     // Extract YouTube video ID from the trailer URL
     const videoId = extractYouTubeVideoId(movie.trailer_url);
+
+    const bookMovie = () => {
+      navigate('/BookMovies');
+    }
   
     return (
+      <>
+      <Navbar/>
       <div className="movie-details">
+        <div className="top-container">
         <h2>{movie.title}</h2>
+        <button className="book-button" onClick={bookMovie}>Book Now</button>
+        </div>
         <div className="details-container">
         <div className="image-container">
         <img height="315px" width="560px" src={`http://127.0.0.1:8000${movie.image}`} alt="Movie Poster" /><br />
@@ -69,6 +81,7 @@ function extractYouTubeVideoId(url) {
         </div>
         {/* Add more movie details as needed */}
       </div>
+      </>
     );
   }
 

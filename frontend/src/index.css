@@ -20,6 +20,7 @@ code {
   background-color: #002147;
   color: white;
   padding-left: 10px;
+  height: fit-content;
 }
 
 .movie-container {
@@ -138,6 +139,16 @@ select:hover, select:focus, input[type="text"]:hover, input[type="text"]:focus {
   color: white;
   margin-bottom: 10px;
 }
+
+.top-container {
+  display: flex;
+  flex-direction: row;
+}
+
+.book-button {
+  margin: 15px;
+  cursor: pointer;
+}
 /*-----------------------------------Navbar section below-----------------------------*/
 .navbar {
   background-color: #000;
@@ -156,6 +167,12 @@ select:hover, select:focus, input[type="text"]:hover, input[type="text"]:focus {
   text-decoration: none;
   color: #fff;
   margin-left: 30px;
+}
+
+.navbar-buttons {
+  display: flex;
+  flex-direction: row;
+  margin-right: 10px;
 }
 
 .navbar-buttons .btn {
@@ -194,14 +211,81 @@ select:hover, select:focus, input[type="text"]:hover, input[type="text"]:focus {
   transition: color 0.3s ease;
 }
 
+.menu-trigger {
+  margin-top: 10px;
+  cursor: pointer;
+  background-color: black;
+  color: white;
+}
+
+.dropdown-menu {
+  position: absolute; 
+  top: 10%;
+  right: 0;
+  background-color: white;
+  border: 1px solid #ccc;
+  border-radius: var(--border-radius);
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+  z-index: 1000;
+  margin-right: 5px;
+
+}
+
+.dropdownItem {
+  padding: 10px;
+  cursor: pointer;
+}
+
+.dropdownItem:hover {
+  background-color: #f0f0f0;
+}
+
+
+.dropdown-menu::before {
+  content: '';
+  height: 20px;
+  width: 20px;
+  background: var(--secondary-bg);
+  transform: rotate(45deg);
+}
+
+.dropdown-menu ul li {
+  padding: 10px 0;
+  border-top: 1px solid rgba(0, 0, 0, 0.5);
+}
+
+.dropdown-menu ul li:hover a {
+  color: #0769d1;
+  cursor: pointer;
+}
+
+.dropdown-menu ul li:hover img {
+  /* opacity: 1; */
+  cursor: pointer;
+}
+
+.dropdownItem {
+  display: flex;
+  margin: 10px auto;
+  margin-right: 20px;
+  text-align: left;
+}
+
+.dropdownItem img {
+  max-width: 20px;
+  margin-right: 10px;
+  /* opacity: 0.5; */
+  transition: var(--speed);
+} 
 /*-------------------------------Registration Section Below------------------------*/
 
 .registration-form {
   background-color: #002147;
-  padding: 180px;
   display: flex;
   flex-direction: column;
   align-items: center;
+  justify-content: center; 
+  height:90.5vh; 
 }
 
 .registration-form h1{
@@ -254,10 +338,11 @@ select:hover, select:focus, input[type="text"]:hover, input[type="text"]:focus {
 
 .login-form {
   background-color: #002147;
-  padding: 268px;
   display: flex;
   flex-direction: column;
   align-items: center;
+  justify-content: center; 
+  height:90.5vh; 
 }
 
 .login-form button {
@@ -284,11 +369,52 @@ select:hover, select:focus, input[type="text"]:hover, input[type="text"]:focus {
 /*--------------------------Account Created Page-----------------*/
 .account-form {
   background-color: #002147;
-  padding: 327px;
   display: flex;
   flex-direction: column;
   align-items: center;
+  justify-content: center; 
+  height:90.5vh;
 }
 .account-form h1{
   color: white;
 }
+
+/*-------------------------------BookMovies Section Below------------------------*/
+.book-moviesform {
+  background-color: #002147;
+  display: flex;
+  flex-direction: column;
+  padding: 10px;
+  align-items: center;
+  justify-content: center; 
+  height: 90.5vh;
+  color: white;
+}
+
+.confirm-btn {
+  background-color: #fff;
+  color: #333;
+  padding: 10px 20px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  margin-top: 20px;
+}
+
+/*-------------------------------OrderSummary Section Below------------------------*/
+
+.order-summary {
+  background-color: #002147;
+  display: flex;
+  flex-direction: column;
+  padding: 10px;
+  align-items: center;
+  justify-content: center; 
+  height: 90.5vh;
+  color: white;
+}
+
+.order-summary button {
+  margin: 5px;
+}
+
