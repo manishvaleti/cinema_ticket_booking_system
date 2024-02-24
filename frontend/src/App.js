@@ -9,6 +9,7 @@ import AccountCreatedPage from './Components/AccountCreatedPage';
 import EditProfile from './Components/EditProfile';
 import BookMovies from './Components/BookMovies';
 import OrderSummary from './Components/OrderSummary';
+import OrderSummaryPage from './Components/OrderSummaryPage';
 
 function App() {
   return (
@@ -25,6 +26,8 @@ function App() {
         <Route path="/BookMovies" element={<BookMovies/>}/>
         <Route path="/OrderSummary" element={<OrderSummary/>}/>
         
+        <Route path="/OrderSummaryPage" element={<OrderSummaryPage />} />
+
         {/* Add more routes for other pages */}
       </Routes>
     </Router>
