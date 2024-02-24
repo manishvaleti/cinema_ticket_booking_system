@@ -8,6 +8,7 @@ import Login from './Components/Login';
 import AccountCreatedPage from './Components/AccountCreatedPage';
 import OrderSummaryPage from './Components/OrderSummaryPage';
 import CheckOutPage from './Components/CheckOutPage';
+import OrderConfirmationPage from './Components/OrderConfirmationPage';
 
 function App() {
   return (
@@ -21,6 +22,7 @@ function App() {
         <Route path="/AccountCreatedPage" element={<AccountCreatedPage />} />
         <Route path="/OrderSummaryPage" element={<OrderSummaryPage />} />
         <Route path="/CheckOutPage" element={<CheckOutPage />} />
+        <Route path="/OrderConfirmationPage" element={<OrderConfirmationPage/>}/>
 
         {/* Add more routes for other pages */}
       </Routes>

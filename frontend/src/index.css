@@ -144,6 +144,9 @@ code {
   cursor: pointer;
   margin-top: 20px;
 }
+.login-form button:hover {
+  background-color: #ccc;
+}
 
 .login-form h1 {
   color: white;
@@ -288,4 +291,52 @@ input[type="text"] {
 
 .checkout-cancel-button:hover {
   background-color: #da190b;
+}
+
+
+/*--------------------------Order Confirmation Page-----------------*/
+
+
+.order-confirmation{
+  background-color: #002147;
+  padding: 50px 0;
+  padding-bottom: 40%;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+
+}
+
+.order-confirmation h1 {
+  size: 3rem;
+  font-weight: 700;
+  color: white;
+  margin-bottom: 30px;
+  text-align: center;
+
+}
+
+.order-confirmation p {
+  font-size: 1.2rem;
+  color: white;
+  margin-bottom: 30px;
+  text-align: center;
+  line-height: 2;
+}
+
+.go-back-button {
+  font-size: 1.2rem;
+  padding: 1 20px;
+  background-color: white;
+  color: #333;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+  text-align: center;
+  margin-left: 43%;
+}
+
+.go-back-button:hover {
+  background-color: #ccc;
 }
