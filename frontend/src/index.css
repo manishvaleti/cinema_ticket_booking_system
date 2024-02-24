@@ -158,12 +158,79 @@ code {
 /*--------------------------Account Created Page-----------------*/
 .account-form {
   background-color: #002147;
-  padding: 327px;
+  padding: 300px;
   display: flex;
   flex-direction: column;
   align-items: center;
 }
+
 .account-form h1{
   color: white;
+}
+
+/*--------------------------Order Summary Page-----------------*/
+.order-summary-page{
+  align-items: center;
+  background-color: #002147;
+  padding-bottom: 45%;
+}
+
+.ordersummary-page h1 {
+  font-size: 2.5rem;
+  font-weight: bold;
+  margin-bottom: 1rem;
+  align-items: center;
+}
+
+.order-summary-title {
+  color: white;
+  text-align: center;
+}
+
+.order-summary-page table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-bottom: 1rem;
+}
+
+.order-summary-page th,
+.order-summary-page td {
+  padding: 0.5rem;
+  border: 1px solid #ddd;
+  text-align: left;
+}
+
+.order-summary-page th {
+  background-color: #ddd;
+}
+
+.order-summary-page button {
+  padding: 0.5rem 1rem;
+  background-color: #4CAF50;
+  color: white;
+  border: none;
+  border-radius: 0.25rem;
+  cursor: pointer;
+  margin-right: 0.5rem;
+}
+
+.order-summary-page button:hover {
+  background-color: #3e8e41;
+}
+
+.order-summary-page .checkout-button {
+  background-color: #fff;
+  color: #333;
+  padding: 10px 20px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  margin-top: 50px;
+  margin-bottom: 10px;
+  margin-left: 89%;
+}
+
+.order-summary-page .checkout-button:hover {
+  background-color: #ccc;
 }
 

@@ -6,6 +6,7 @@ import Home from './Components/Home'; // Assuming you have a Home component for 
 import MovieDetails from './Components/movieInd';
 import Login from './Components/Login';
 import AccountCreatedPage from './Components/AccountCreatedPage';
+import OrderSummaryPage from './Components/OrderSummaryPage';
 
 function App() {
   return (
@@ -17,6 +18,8 @@ function App() {
         <Route path="/Login" element={<Login />} />
         <Route path="/movies/:movieId/" element={<MovieDetails />} />
         <Route path="/AccountCreatedPage" element={<AccountCreatedPage />} />
+        <Route path="/OrderSummaryPage" element={<OrderSummaryPage />} />
+
         {/* Add more routes for other pages */}
       </Routes>
     </Router>
