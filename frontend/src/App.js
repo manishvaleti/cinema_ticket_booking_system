@@ -7,6 +7,7 @@ import MovieDetails from './Components/movieInd';
 import Login from './Components/Login';
 import AccountCreatedPage from './Components/AccountCreatedPage';
 import OrderSummaryPage from './Components/OrderSummaryPage';
+import CheckOutPage from './Components/CheckOutPage';
 
 function App() {
   return (
@@ -19,6 +20,7 @@ function App() {
         <Route path="/movies/:movieId/" element={<MovieDetails />} />
         <Route path="/AccountCreatedPage" element={<AccountCreatedPage />} />
         <Route path="/OrderSummaryPage" element={<OrderSummaryPage />} />
+        <Route path="/CheckOutPage" element={<CheckOutPage />} />
 
         {/* Add more routes for other pages */}
       </Routes>

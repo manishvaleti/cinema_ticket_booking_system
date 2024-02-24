@@ -43,7 +43,7 @@ function OrderSummaryPage() {
   };
 
   return (
-
+    
     <div className="order-summary-page">
         <Navbar />
         <h1 className="order-summary-title">Order Summary</h1>
@@ -82,7 +82,7 @@ function OrderSummaryPage() {
       </button>
       
     </div>
-    
+  
   );
 }
 

@@ -78,7 +78,7 @@ code {
   align-items: center;
 }
 
-.registration-form h1{
+.registration-form h1 {
   color: white;
 }
 
@@ -145,11 +145,11 @@ code {
   margin-top: 20px;
 }
 
-.login-form h1{
+.login-form h1 {
   color: white;
 }
 
-.form-group{
+.form-group {
   display: flex;
   flex-direction: column;
   width: 300px;
@@ -164,12 +164,12 @@ code {
   align-items: center;
 }
 
-.account-form h1{
+.account-form h1 {
   color: white;
 }
 
 /*--------------------------Order Summary Page-----------------*/
-.order-summary-page{
+.order-summary-page {
   align-items: center;
   background-color: #002147;
   padding-bottom: 45%;
@@ -195,27 +195,13 @@ code {
 
 .order-summary-page th,
 .order-summary-page td {
-  padding: 0.5rem;
-  border: 1px solid #ddd;
+  padding: 0.7rem;
+  border: 2px solid #ddd;
   text-align: left;
 }
 
 .order-summary-page th {
   background-color: #ddd;
-}
-
-.order-summary-page button {
-  padding: 0.5rem 1rem;
-  background-color: #4CAF50;
-  color: white;
-  border: none;
-  border-radius: 0.25rem;
-  cursor: pointer;
-  margin-right: 0.5rem;
-}
-
-.order-summary-page button:hover {
-  background-color: #3e8e41;
 }
 
 .order-summary-page .checkout-button {
@@ -234,3 +220,72 @@ code {
   background-color: #ccc;
 }
 
+/*--------------------------Check Out Page-----------------*/
+.background-container{
+  background-color: #002147;
+  padding: auto;
+}
+
+.checkout-container {
+  width: 40%;
+  margin: 0px auto;
+  padding: 20px;
+  border-radius: 5px;
+}
+
+.checkout-container h1 {
+  text-align: center;
+  margin-bottom: 30px;
+  color: white;
+}
+
+form {
+  display: flex;
+  flex-direction: column;
+}
+
+h3 {
+  margin-top: 30px;
+  margin-bottom: 10px;
+  color: white;
+}
+
+input[type="text"] {
+  padding: 10px;
+  margin-bottom: 10px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  background-color: white;
+  color: #333;
+}
+
+.checkoutpage-button {
+  padding: 10px 20px;
+  background-color: white;
+  color: #333;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  margin-top: 20px;
+  width: 40%;
+  margin-left: 30%;
+  margin-bottom: 20px;
+}
+
+.checkoutpage-button:hover {
+  background-color: #ccc;
+}
+
+.checkout-cancel-button {
+  background-color: #f44336;
+  width: 40%;
+  height: 40%;
+  margin-left: 30%;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.checkout-cancel-button:hover {
+  background-color: #da190b;
+}
