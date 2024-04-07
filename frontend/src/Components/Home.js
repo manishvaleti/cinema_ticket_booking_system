@@ -1,16 +1,17 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-import { useNavigate } from 'react-router-dom';
 import Navbar from './Navbar';
-
 function MovieList() {
   const [movies, setMovies] = useState([]);
   const [nowShowing, setNowShowing] = useState([]);
   const [upcoming, setUpcoming] = useState([]);
   const [selectedGenre, setSelectedGenre] = useState('all');
   const [searchTerm, setSearchTerm] = useState('');
-  const navigate = useNavigate();
+  
 
+  
+
+  
   useEffect(() => {
     async function fetchMovies() {
       try {
@@ -83,23 +84,29 @@ function MovieList() {
     setSelectedGenre(event.target.value.toLowerCase());
   };
 
-  const handleSearch = (event) => {
-    setSearchTerm(event.target.value.toLowerCase());
-  };
-
-  const handleMoreInfo = async (movieId) => {
-    try {
-      navigate(`/movies/${movieId}`); // Redirect to movie details page
-    } catch (error) {
-      console.error('Error redirecting to movie details page:', error);
+  const handleSearch = async (event) => {
+    const value = event.target.value.toLowerCase();
+    setSearchTerm(value);
+  
+    // If the search term becomes empty, refetch movies from the database
+    if (value === '') {
+      try {
+        const response = await axios.get('http://127.0.0.1:8000/');
+        setMovies(response.data);
+      } catch (error) {
+        console.error('Error fetching movies:', error);
+      }
     }
   };
+  
+
 
   return (
-    <div>
-      <Navbar></Navbar>
-      <div  className="home">
-      <h2>Filter by Genre</h2>
+    <div >
+      
+      <Navbar />
+      <div className="home" >
+      <div style={{ textAlign: 'right' }}>
       <select onChange={handleGenreFilter} value={selectedGenre}>
         <option value="all">All Genres</option>
         <option value="action">Action</option>
@@ -110,12 +117,16 @@ function MovieList() {
         <option value="science fiction">Science Fiction</option>
       </select>
 
+      {/* <input style={{ textAlign: 'center' }} type="text" onChange={handleSearch} value={searchTerm} placeholder="Search by movie title" /> */}
+      
       <input style={{ textAlign: 'center' }} type="text" onChange={handleSearch} value={searchTerm} placeholder="Search by movie title" />
-
       </div>
+      
       <h2>Now Showing</h2>
       {nowShowing.length > 0 ? (
+        
         <div className='movie-container'>
+          
           {nowShowing.map(movie => (
             <a href={`/movies/${movie.id}`} className='movie-card' key={movie.id} style={{ backgroundImage: `url(http://127.0.0.1:8000${movie.image})` }} data-title={movie.title}>
             <div className='movie-card' style={{ width: '150px', height: '200px', backgroundColor: 'gray', display: 'flex', justifyContent: 'center', alignItems: 'center', color: 'white' }}
@@ -125,6 +136,7 @@ function MovieList() {
           </a>
           ))}
         </div>
+      
       ) : (
         <p>No movies available</p>
       )}
@@ -145,7 +157,7 @@ function MovieList() {
       ) : (
         <p>No movies available</p>
       )}
-      
+      </div>
     </div>
     
   );

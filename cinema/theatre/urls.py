@@ -6,4 +6,15 @@ urlpatterns = [
     path('users/',user_list,name='user_list'),
     path('',movies,name="movies"),
     path('movies/<int:movie_id>/', movie_details, name='movie-details'),
+    path('login/', user_login, name='user_login'),
+    path('logout/', user_logout, name='user_logout'),
+    path('edit_profile/', EditProfileView.as_view(), name='edit_profile'),
+    path('change_password/', ChangePasswordAPIView.as_view(), name='change_password'),
+    path('csrf-token/', get_csrf_token, name='get_csrf_token'),
+    path('forgot_password/', ForgotPasswordAPIView.as_view(),name='forgot_password'),
+    path('reset_password/', ResetPasswordAPIView.as_view(),name='reset_password'),
+    path('seat-booking/<int:show_id>/', seat_booking, name='seat-booking'),
+    path('shows/<int:show_id>/capacity/', get_capacity, name='get_capacity'),
+    path('shows/<int:show_id>/', get_price, name='show-seat-price'),
+    path('categories/',get_categories,name='categories')
 ]

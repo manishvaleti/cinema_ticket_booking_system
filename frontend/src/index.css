@@ -5,6 +5,7 @@ body {
     sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  background-color: #002147
 }
 
 code {
@@ -125,8 +126,8 @@ select:hover, select:focus, input[type="text"]:hover, input[type="text"]:focus {
 }
 
 .image-container img {
-  width: 315px;
-  height: 315px;
+  width: 275px;
+  height: 350px;
   margin-right: 20px;
   border: 1px solid lightblue;
 }
@@ -138,6 +139,8 @@ select:hover, select:focus, input[type="text"]:hover, input[type="text"]:focus {
   border-radius: 5px;
   color: white;
   margin-bottom: 10px;
+  height: 330px; /* Fixed height */
+  overflow-y: auto;
 }
 
 .top-container {
@@ -145,10 +148,18 @@ select:hover, select:focus, input[type="text"]:hover, input[type="text"]:focus {
   flex-direction: row;
 }
 
-.book-button {
-  margin: 15px;
+.timing-button {
+  background-color: #fff;
+  color: #333;
+  padding: 10px 20px;
+  border: none;
+  border-radius: 5px;
   cursor: pointer;
+  margin-top: 10px;
+  margin-right:30px;
+  font-size: medium;
 }
+
 /*-----------------------------------Navbar section below-----------------------------*/
 .navbar {
   background-color: #000;
@@ -327,12 +338,20 @@ select:hover, select:focus, input[type="text"]:hover, input[type="text"]:focus {
   border-radius: 5px;
   cursor: pointer;
   margin-top: 20px;
+  width: 50%;
+  margin-left: 70px;
 }
 
 .registration-form button:hover {
   background-color: #ccc;
+  
 }
-
+.input-list input[type="text"],
+.input-list input[type="email"],
+.input-list input[type="file"],
+.input-list input[type="date"]{
+    width: 90%; /* Set the width to 100% */
+}
 
 /*----------------------------------Login Section------------------------------*/
 
@@ -364,7 +383,14 @@ select:hover, select:focus, input[type="text"]:hover, input[type="text"]:focus {
   flex-direction: column;
   width: 300px;
 }
+.input-list input[type="text"],
+.input-list input[type="password"]{
+    width: 90%; /* Set the width to 100% */
+}
 
+.login-form p{
+  color: #ccc;
+}
 
 /*--------------------------Account Created Page-----------------*/
 .account-form {
@@ -374,7 +400,7 @@ select:hover, select:focus, input[type="text"]:hover, input[type="text"]:focus {
   flex-direction: column;
   align-items: center;
   justify-content: center; 
-  height:90.5vh;
+  height:20.5vh;
 }
 
 .account-form h1{
@@ -478,7 +504,7 @@ select:hover, select:focus, input[type="text"]:hover, input[type="text"]:focus {
   padding: 10px;
   align-items: center;
   justify-content: center; 
-  height: 90.5vh;
+  height: 60.5vh;
   color: white;
 }
 
@@ -486,3 +512,273 @@ select:hover, select:focus, input[type="text"]:hover, input[type="text"]:focus {
   margin: 5px;
 }
 
+/*--------------------------Check Out Page-----------------*/
+.background-container{
+  background-color: #002147;
+  padding: auto;
+}
+
+.checkout-container {
+  width: 40%;
+  margin: 0px auto;
+  padding: 20px;
+  border-radius: 5px;
+}
+
+.checkout-container h1 {
+  text-align: center;
+  margin-bottom: 30px;
+  color: white;
+}
+
+form {
+  display: flex;
+  flex-direction: column;
+}
+
+h3 {
+  margin-top: 30px;
+  margin-bottom: 10px;
+  color: white;
+}
+
+input[type="text"] {
+  padding: 10px;
+  margin-bottom: 10px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  background-color: white;
+  color: #333;
+}
+
+.checkoutpage-button {
+  padding: 10px 20px;
+  background-color: white;
+  color: #333;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  margin-top: 20px;
+  width: 40%;
+  margin-left: 30%;
+  margin-bottom: 20px;
+}
+
+.checkoutpage-button:hover {
+  background-color: #ccc;
+}
+
+.checkout-cancel-button {
+  background-color: #f44336;
+  width: 40%;
+  height: 40%;
+  margin-left: 30%;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.checkout-cancel-button:hover {
+  background-color: #da190b;
+}
+
+
+/*--------------------------Order Confirmation Page-----------------*/
+.order-confirmation{
+  background-color: #002147;
+  padding: 50px 0;
+  padding-bottom: 40%;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+
+}
+
+.order-confirmation h1 {
+  size: 3rem;
+  font-weight: 700;
+  color: white;
+  margin-bottom: 30px;
+  text-align: center;
+
+}
+
+.order-confirmation p {
+  font-size: 1.2rem;
+  color: white;
+  margin-bottom: 30px;
+  text-align: center;
+  line-height: 2;
+}
+
+.go-back-button {
+  font-size: 1.2rem;
+  padding: 1 20px;
+  background-color: white;
+  color: #333;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+  text-align: center;
+  margin-left: 43%;
+}
+
+.go-back-button:hover {
+  background-color: #ccc;
+}
+
+
+/*-----------------------Seat Map Page-----------------*/
+
+
+.seat-map {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin: 20px;
+}
+
+.screen {
+  background-color: #ddd;
+  /* padding: 10px; */
+  width: 70%;
+  text-align: center;
+  margin-bottom: 20px;
+  font-weight: bold;
+}
+
+.row {
+  display: flex;
+  justify-content: center;
+}
+
+.seat {
+  width: 40px;
+  height: 30px;
+  margin: 5px;
+  background-color: #f0f0f0;
+  border: 1px solid #ccc;
+  cursor: pointer;
+}
+
+.seat.selected {
+  background-color: lightgreen;
+}
+.seat.booked {
+  background-color: grey; /* Bootstrap 'btn-danger' red, for example */
+  cursor: not-allowed;
+}
+
+.seat-legend {
+  display: flex;
+  justify-content: center;
+  margin-top: 20px;
+}
+
+.legend-item {
+  display: flex;
+  align-items: center;
+  margin-right: 20px; /* Adjust spacing as needed */
+  color: white;
+}
+
+.legend-item span.seat.sample {
+  width: 20px; /* Smaller than actual seats for representation */
+  height: 20px;
+  margin-right: 5px;
+}
+/* Add additional styling as needed */
+
+
+/*-----------------------Change Password-----------------*/
+
+.changePassword {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center; 
+  height:50.5vh; 
+}
+
+.changePassword button {
+  background-color: #fff;
+  color: #333;
+  padding: 10px 20px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  margin-top: 20px;
+  width: 45%;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.changePassword h2{
+  color: white;
+}
+
+.form-group{
+  display: flex;
+  flex-direction: column;
+  width: 300px;
+}
+
+/*-----------------------Forgot Password-----------------*/
+
+.forgotPassword {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center; 
+  height:50.5vh; 
+}
+
+.forgotPassword button {
+  background-color: #fff;
+  color: #333;
+  padding: 10px 20px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  margin-top: 20px;
+  width: 45%;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.forgotPassword h2{
+  color: white;
+}
+
+.form-group{
+  display: flex;
+  flex-direction: column;
+  width: 300px;
+}
+
+/*-----------------------Reset Password-----------------*/
+.resetPassword {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center; 
+  height:50.5vh; 
+}
+
+.resetPassword button {
+  background-color: #fff;
+  color: #333;
+  padding: 10px 20px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  margin-top: 20px;
+  width: 45%;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.resetPassword h2{
+  color: white;
+}

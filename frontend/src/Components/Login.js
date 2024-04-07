@@ -1,75 +1,115 @@
 import React, { useState } from 'react';
 import axios from 'axios';
-import { Link } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import Navbar from './Navbar';
+import { useAuth } from './AuthContext';
+import {jwtDecode} from 'jwt-decode';
 
 function Login() {
+    const navigate = useNavigate();
+    const { login } = useAuth();
     const [formData, setFormData] = useState({
         username: '',
-        email: '',
         password: '',
-        address: '',
-        phoneNumber: '',
-        photo: null,
-        provideCreditCardDetails: false,
-        creditCardNumber: '',
-        creditCardExpiry: '',
-        creditCardCVV: ''
     });
+    
+    const handleRegisterClick = () => {
+        navigate('/register');
+    };
+
+    const onForgotClick = () => {
+        navigate('/forgotPassword');
+    };
 
     const handleChange = (e) => {
-        if (e.target.name === 'photo') {
-            setFormData({ ...formData, photo: e.target.files[0] });
-        } else if (e.target.name === 'provideCreditCardDetails') {
-            setFormData({ ...formData, provideCreditCardDetails: e.target.checked });
-        } else {
-            setFormData({ ...formData, [e.target.name]: e.target.value });
+        setFormData({ ...formData, [e.target.name]: e.target.value });
+    };
+
+    const fetchCSRFToken = async () => {
+        try {
+            const csrfResponse = await axios.get('http://127.0.0.1:8000/csrf-token/');
+            const csrfToken = csrfResponse.data.csrfToken;
+            return csrfToken;
+        } catch (error) {
+            console.error('Error fetching CSRF token:', error);
+            return null;
         }
     };
 
     const handleSubmit = async (e) => {
         e.preventDefault();
+        const csrfToken = await fetchCSRFToken();
+        if (!csrfToken) {
+            console.error('CSRF token not available.');
+            return;
+        }
+
         try {
-            const userData = new FormData();
-            userData.append('username', formData.username);
-            userData.append('password', formData.password);
+            const response = await axios.post('http://127.0.0.1:8000/login/', formData, {
+                headers: {
+                    'X-CSRFToken': csrfToken,
+                },
+            });
+            const authToken = response.data.token // Extract authentication token from response headers
 
-            const response = await axios.post('http://127.0.0.1:8000/api/register/', userData);
-            console.log(response.data); // Response from Django backend
+            // Store the authentication token securely, for example in localStorage
+            localStorage.setItem('authToken', authToken);
+            const decodedToken = jwtDecode(authToken);
 
+            console.log(decodedToken)
+            const userData = response.data;
+            login(userData.is_active);
+
+            if (userData.is_superuser) {
+                window.location.href = 'http://127.0.0.1:8000/admin/';
+            } else {
+                navigate('/');
+            }
         } catch (error) {
             console.error('Error:', error);
+            if (error.response && error.response.status === 401) {
+                alert('Invalid credentials'); 
+                setFormData({
+                    username: '',
+                    password: ''
+                });
+            } else {
+                // Optionally handle other types of errors
+            }
         }
     };
 
     return (
-        <><div /><Navbar />
-        
-        <div class="login-form">
-            <h1>User Login</h1>
-            <div class="input-list">
-                
-                <input type="email" name="email" placeholder="Email" value={formData.email} onChange={handleChange} />
-                <input type="password" name="password" placeholder="Password" value={formData.password} onChange={handleChange} />
-
-                {formData.provideCreditCardDetails && (
-                    <div>
-                        <input type="text" name="creditCardNumber" placeholder="Credit Card Number" value={formData.creditCardNumber} onChange={handleChange} />
-                        <input type="date" name="creditCardExpiry" placeholder="Credit Card Expiry (MM/YYYY)" value={formData.creditCardExpiry} onChange={handleChange} />
-                        <input type="text" name="creditCardCVV" placeholder="Credit Card CVV" value={formData.creditCardCVV} onChange={handleChange} />
+        <>
+            <Navbar />
+            <div className="login-form">
+                <h1>User Login</h1>
+                <form onSubmit={handleSubmit} >
+                    <div className="input-list"style={{margin: '0 auto'}}>
+                        <input
+                            type="text"
+                            name="username"
+                            placeholder="Username"
+                            value={formData.username}
+                            onChange={handleChange}
+                        />
+                        <input
+                            type="password"
+                            name="password"
+                            placeholder="Password"
+                            value={formData.password}
+                            onChange={handleChange}
+                        />
+                    
+                    <button type="submit" style={{ width: '40%',margin: '0 auto' }}>Login</button>
                     </div>
-                )}
+                </form>
+                <button onClick={onForgotClick}>Forgot Password</button>
+                <p>
+                    Don't have an account? <button onClick={handleRegisterClick}>Register</button>
+                </p>
             </div>
-            <button type="submit">Login</button>
-            <p>
-                <span style={{ color: 'white' }}>Don't have an account?</span> {' '}
-                <Link to="/register" className="btn btn-login mr-2" >Register</Link>
-
-            </p>
-        </div>
-        
-    </>
-        
+        </>
     );
 }
 

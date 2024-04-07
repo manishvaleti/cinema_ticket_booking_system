@@ -3,7 +3,7 @@ import axios from 'axios';
 import { useLocation } from 'react-router-dom'; // Import useParams hook
 import Navbar from './Navbar';
 import { useNavigate } from 'react-router-dom';
-
+import { useAuth } from './AuthContext';
 function extractYouTubeVideoId(url) {
     // Regular expression to match YouTube video IDs in various URL formats
     const regExp = /^(?:https?:\/\/)?(?:www\.)?(?:youtube\.com\/(?:[^\n\s]+\/\S+\/|(?:v|e(?:mbed)?)\/|\S*?[?&]v=)|youtu\.be\/)([a-zA-Z0-9_-]{11})$/;
@@ -21,68 +21,104 @@ function extractYouTubeVideoId(url) {
   function MovieDetails() {
     const navigate = useNavigate();
     const [movie, setMovie] = useState(null);
-    const location = useLocation(); // Get current location
-    const movieId = location.pathname.split('/').pop(); // Extract movieId from URL path
-  
+    const [shows, setShows] = useState([]);
+    const location = useLocation();
+    const movieId = location.pathname.split('/').pop();
+    const { isLoggedIn } = useAuth();
     useEffect(() => {
       async function fetchMovieDetails() {
         try {
           const response = await axios.get(`http://127.0.0.1:8000/movies/${movieId}/`);
-          setMovie(response.data);
+          setMovie(response.data.movie);
+          setShows(response.data.shows);
         } catch (error) {
           console.error('Error fetching movie details:', error);
         }
       }
-      if (movieId) { // Make sure movieId is not null or undefined
+      if (movieId) {
         fetchMovieDetails();
       }
-    }, [movieId]); // Fetch movie details when movieId changes
+    }, [movieId]);
   
     if (!movie) {
       return <div>Loading...</div>;
     }
   
-    // Extract YouTube video ID from the trailer URL
-    const videoId = extractYouTubeVideoId(movie.trailer_url);
+    const videoId = movie.trailer_url ? extractYouTubeVideoId(movie.trailer_url) : null;
+  
+    
+    const groupedShows = shows.reduce((acc, show) => {
+      const date = show.start_time.split('T')[0];
+      const time = show.start_time.split('T')[1].slice(0, -4); // Remove seconds
+      const id = show.id; // Get the show ID
+      const today = new Date().toISOString().split('T')[0]; // Get today's date
+      
+      if (date >= today) {
+        acc[date] = acc[date] || [];
+        acc[date].push({ time, id }); // Store both time and ID
+      }
+      
+      return acc;
+    }, {});
+    
 
-    const bookMovie = () => {
-      navigate('/BookMovies');
-    }
+    const handleShowSelection = (showId) => {
+      // Navigate to the seats page with the selected show ID
+      navigate(`/SeatMap/${showId}`);
+    };
   
     return (
       <>
-      <Navbar/>
-      <div className="movie-details">
-        <div className="top-container">
-        <h2>{movie.title}</h2>
-        <button className="book-button" onClick={bookMovie}>Book Now</button>
+        <Navbar />
+        <div className="movie-details">
+          <div className="top-container">
+            <h2>{movie.title}</h2>
+          </div>
+          <div className="details-container">
+            <div className="image-container">
+              <img height="315px" width="400px" src={`http://127.0.0.1:8000${movie.image}`} alt="Movie Poster" /><br />
+            </div>
+            <div className="des-container">
+              <p><strong>Description:</strong> {movie.description}</p>
+              <p><strong>Release Date:</strong> {movie.release_date}</p>
+              <p><strong>Duration:</strong> {movie.duration} minutes</p>
+              <p><strong>Genre:</strong> {movie.genre}</p>
+            </div>
+          </div>
+          <div>
+            {videoId && (
+              <iframe
+                width="560"
+                height="315"
+                src={`https://www.youtube.com/embed/${videoId}`}
+                title="YouTube video player"
+                frameBorder="0"
+                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                allowFullScreen
+              ></iframe>
+            )}
+          </div>
+          {isLoggedIn && (
+          <div className="show-details">
+          <h3>Show Details</h3>
+          {Object.entries(groupedShows).map(([date, timings]) => (
+            <div key={date}>
+              <p><strong>Date:</strong> {date}</p>
+              <div>
+                {timings.map(({time,id}, index) => (
+                  <button key={index} className="timing-button" onClick={() => handleShowSelection(id)}>{time}</button>
+                ))}
+              </div>
+            </div>
+          ))}
+          {shows.length === 0 && <p>No shows yet.</p>}
+          
+          </div>
+          )}
         </div>
-        <div className="details-container">
-        <div className="image-container">
-        <img height="315px" width="560px" src={`http://127.0.0.1:8000${movie.image}`} alt="Movie Poster" /><br />
-        </div>
-        <div className="des-container">
-        <p><strong>Description:</strong> {movie.description}</p>
-        <p><strong>Release Date:</strong> {movie.release_date}</p>
-        <p><strong>Duration:</strong> {movie.duration} minutes</p>
-        <p><strong>Genre:</strong> {movie.genre}</p>
-        </div>
-        </div>
-        <div>
-          <iframe
-            width="560"
-            height="315"
-            src={`https://www.youtube.com/embed/${videoId}`}
-            title="YouTube video player"
-            frameborder="0"
-            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-            allowfullscreen
-          ></iframe>
-        </div>
-        {/* Add more movie details as needed */}
-      </div>
       </>
     );
   }
+  
 
 export default MovieDetails;
