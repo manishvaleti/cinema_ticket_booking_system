@@ -8,6 +8,7 @@ admin.site.register(PromoCode)
 admin.site.register(Screen)
 admin.site.register(Show)
 admin.site.register(Seat)
+admin.site.register(Booking)
 
 admin.site.site_header = 'CinemaVerse'  # Optional: Change site header text
 admin.site.site_title = 'CinemaVerse'  # Optional: Change browser tab title

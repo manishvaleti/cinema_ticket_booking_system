@@ -30,22 +30,18 @@ class User(AbstractUser):
         return pt.decode()
 
     def save(self, *args, **kwargs):
-        if not self.pk:
-            key = get_random_bytes(32)
-            self.key = key
-        if self.credit_card_number and self.credit_card_cvv:
-            # Generate a 256-bit (32-byte) key
-            
+        # Encrypt credit card details only if they are provided and the user instance is being created (not updated)
+        if not self.pk and self.credit_card_number and self.credit_card_cvv:
+            if not self.key:
+                self.key = get_random_bytes(32)
 
-            # Encrypt credit card number and CVV
             iv_ccn, encrypted_ccn = self.encrypt_aes(self.credit_card_number, self.key)
             iv_cvv, encrypted_cvv = self.encrypt_aes(self.credit_card_cvv, self.key)
 
-            # Store IV and encrypted data as base64 strings
-            self.credit_card_number = base64.b64encode(iv_ccn + encrypted_ccn).decode().ljust(24, "=")
-            self.credit_card_cvv = base64.b64encode(iv_cvv + encrypted_cvv).decode().ljust(24, "=")
-            
-        super().save(*args, **kwargs)
+            self.credit_card_number = base64.b64encode(iv_ccn + encrypted_ccn).decode().ljust(500, "=")
+            self.credit_card_cvv = base64.b64encode(iv_cvv + encrypted_cvv).decode().ljust(500, "=")
+
+        super(User, self).save(*args, **kwargs)
 
 class Movie(models.Model):
     GENRE_CHOICES = [
@@ -102,16 +98,11 @@ class Seat(models.Model):
         return f"{self.show} - {self.seatNo} ({self.get_category_display()})"
 
 class Booking(models.Model):
-    STATUS_CHOICES = [
-        ('Confirmed', 'Confirmed'),
-        ('Cancelled', 'Cancelled'),
-    ]
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     show = models.ForeignKey(Show, on_delete=models.CASCADE)
     date = models.DateField(default=timezone.now)
     booking_time = models.DateTimeField(auto_now_add=True)
     total_amount = models.DecimalField(max_digits=8, decimal_places=2)
-    status = models.CharField(max_length=20, choices=STATUS_CHOICES)
 
 class PromoCode(models.Model):
     DISCOUNT_CHOICES = [
@@ -125,8 +116,7 @@ class PromoCode(models.Model):
     valid_to = models.DateTimeField()
     max_usage_count = models.IntegerField()
     current_usage_count = models.IntegerField(default=0)
+    def __str__(self):
+        return self.code
 
-class PromoCodeUsage(models.Model):
-    promo_code = models.ForeignKey(PromoCode, on_delete=models.CASCADE)
-    user = models.ForeignKey(User, on_delete=models.CASCADE)
-    booking = models.ForeignKey(Booking, on_delete=models.CASCADE)
+

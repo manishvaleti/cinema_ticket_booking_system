@@ -43,8 +43,23 @@ def user_list(request):
 @api_view(['GET'])
 def movies(request):
     if request.method == 'GET':
-        movies = Movie.objects.all()
-        serializer = MovieSerializer(movies, many=True)
+        # Get query parameters
+        genre = request.query_params.get('genre', None)
+        search = request.query_params.get('search', None)
+
+        # Start with all movies
+        queryset = Movie.objects.all()
+
+        # Filter by genre if the genre parameter is provided and not 'all'
+        if genre and genre.lower() != 'all':
+            queryset = queryset.filter(genre__icontains=genre)
+
+        # Filter by search term if the search parameter is provided
+        if search:
+            queryset = queryset.filter(title__icontains=search)
+
+        # Apply the serializer and return the response
+        serializer = MovieSerializer(queryset, many=True)
         return Response(serializer.data)
     
 
@@ -110,13 +125,6 @@ class EditProfileView(APIView):
         cipher = AES.new(key, AES.MODE_CBC, iv=iv)
         pt = unpad(cipher.decrypt(ct_bytes), AES.block_size)
         return pt.decode()
-    # def decrypt_aes(self, iv, ct_bytes, key):
-    #     cipher = Cipher(algorithms.AES(key), modes.CBC(iv))
-    #     decryptor = cipher.decryptor()
-    #     pt = decryptor.update(ct_bytes) + decryptor.finalize()
-    #     unpadder = padding.PKCS7(128).unpadder()
-    #     pt = unpadder.update(pt) + unpadder.finalize()
-    #     return pt.decode()
 
     def get(self, request, *args, **kwargs):
         # Get the JWT token from the request headers
@@ -130,29 +138,30 @@ class EditProfileView(APIView):
             # Get user details based on the decoded user_id
             user = User.objects.get(id=user_id)
             
-            # Decode and decrypt credit card number
-            ccn_data = base64.b64decode(user.credit_card_number)
-            iv_ccn = ccn_data[:16]  # Extract IV
-            encrypted_ccn = ccn_data[16:]  # Extract encrypted data
-            ccn = self.decrypt_aes(iv_ccn, encrypted_ccn, user.key)
+            # Initialize decrypted values
+            ccn = ''
+            cvv = ''
+            
+            # Check if credit card number and CVV are not empty
+            if user.credit_card_number:
+                # Decode and decrypt credit card number
+                ccn_data = base64.b64decode(user.credit_card_number)
+                iv_ccn = ccn_data[:16]  # Extract IV
+                encrypted_ccn = ccn_data[16:]  # Extract encrypted data
+                ccn = self.decrypt_aes(iv_ccn, encrypted_ccn, user.key)
 
-            # Decode and decrypt CVV
-            cvv_data = base64.b64decode(user.credit_card_cvv)
-            iv_cvv = cvv_data[:16]  # Extract IV
-            encrypted_cvv = cvv_data[16:]  # Extract encrypted data
-            try:
+            if user.credit_card_cvv:
+                # Decode and decrypt CVV
+                cvv_data = base64.b64decode(user.credit_card_cvv)
+                iv_cvv = cvv_data[:16]  # Extract IV
+                encrypted_cvv = cvv_data[16:]  # Extract encrypted data
                 cvv = self.decrypt_aes(iv_cvv, encrypted_cvv, user.key)
-            except Exception as e:
-    # Handle decryption error
-                print(f"Error during decryption: {e}")
-                return Response({'error': 'Decryption failed'}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
             # Serialize user details with decrypted card details
             serializer = UserSerializer(user)
             data = serializer.data
             data['credit_card_number'] = ccn
             data['credit_card_cvv'] = cvv
-            print(data,ccn,cvv)
             return Response(data)
 
         except jwt.ExpiredSignatureError:
@@ -374,3 +383,63 @@ def get_price(request, show_id):
 def get_categories(request):
     categories = Seat.CATEGORY_CHOICES
     return Response(categories)
+
+@api_view(['POST'])
+def validate_promo_code(request):
+    promo_code = request.data.get('promo_code')
+    current_date = timezone.now()
+    total_amount = request.data.get('total_amount')
+    try:
+        promo = PromoCode.objects.get(code=promo_code)
+        if promo.valid_from <= current_date <= promo.valid_to and promo.current_usage_count < promo.max_usage_count:
+            # Calculate discount based on the type of discount
+            if promo.discount_type == 'Percentage':
+                discount = promo.discount_value / 100 * total_amount  # Adjust total_amount based on your implementation
+            elif promo.discount_type == 'Fixed Amount':
+                discount = promo.discount_value
+            promo.current_usage_count += 1
+            promo.save()
+            return Response({'discount': discount})
+        else:
+            return Response({'error': 'Invalid promo code'})
+    except PromoCode.DoesNotExist:
+        return Response({'error': 'Invalid promo code'})
+    
+
+@api_view(['POST'])
+def create_booking(request):
+    if request.method == 'POST':
+        # Deserialize data sent from frontend
+        token = request.headers.get('Authorization', '').split(' ')[1]
+        try:
+            # Decode and verify the JWT token
+            payload = jwt.decode(token, settings.SECRET_KEY, algorithms=['HS256'])
+            user_id = payload['user_id']
+            show_id = request.data.get('show_id')
+            total_amount = request.data.get('total_amount')
+            
+            booking = Booking.objects.create(
+            user_id=user_id,
+            show_id=show_id,
+            total_amount=total_amount
+        )
+
+        # Serialize booking instance to send as response
+            serializer = BookingSerializer(booking)
+            return Response(serializer.data)
+        except jwt.ExpiredSignatureError:
+            # Handle token expiration error
+            return Response({'error': 'Token has expired'}, status=status.HTTP_401_UNAUTHORIZED)
+        
+        except jwt.InvalidTokenError:
+            # Handle invalid token error
+            return Response({'error': 'Invalid token'}, status=status.HTTP_401_UNAUTHORIZED)
+
+        except User.DoesNotExist:
+            # Handle user not found error
+            return Response({'error': 'User not found'}, status=status.HTTP_404_NOT_FOUND)
+        
+        # Create booking instance
+       
+    else:
+        return Response({'error': 'Method not allowed'}, status=405)

@@ -9,6 +9,13 @@ function OrderSummary() {
   const [order, setOrder] = useState([]);
   const [showDetails, setShowDetails] = useState({ price: 0, movie: '', startTime: '' });
   const [categories, setCategories] = useState([]); // State to store categories
+  const [promoCode, setPromoCode] = useState(''); // State for promo code
+  const [discount, setDiscount] = useState(0);
+  const [totalAmount, setTotalAmount] = useState(0); // State for total amount
+  const [promoCodeMessage, setPromoCodeMessage] = useState('');
+  const [cardNumber, setCardNumber] = useState('');
+  const [expirationDate, setExpirationDate] = useState('');
+  const [cvv, setCVV] = useState('');
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -16,7 +23,7 @@ function OrderSummary() {
       try {
         const response = await axios.get(`http://127.0.0.1:8000/shows/${showId}/`);
         const startTime = new Date(response.data.start_time);
-        const formattedStartTime = startTime.toLocaleString(); // This will format the date and time according to the locale
+        const formattedStartTime = startTime.toLocaleTimeString([], {year: 'numeric', month: 'numeric', day: 'numeric', hour: '2-digit', minute: '2-digit' }); // This will format the date and time according to the locale
   
         setShowDetails({
           price: response.data.price,
@@ -53,9 +60,42 @@ function OrderSummary() {
     }
   }, [showId, selectedSeats]);
 
-  // const calculateTotal = () => {
-  //   return order.reduce((total, ticket) => total + parseFloat(ticket.price), 0);
-  // };
+  useEffect(() => {
+    // Calculate total amount when order or discount changes
+    const total = order.reduce((total, ticket) => total + parseFloat(ticket.price), 0);
+    setTotalAmount(total - discount); // Subtract discount from total
+  }, [order, discount]);
+
+  useEffect(() => {
+    // Fetch user data with encrypted card details and decrypt them
+    const fetchUserData = async () => {
+      try {
+        const authToken = localStorage.getItem('authToken'); // Retrieve authentication token from local storage
+        console.log(authToken);
+        if (!authToken) {
+          throw new Error('Authentication token not found in localStorage');
+          }
+        
+        const response = await axios.get('http://127.0.0.1:8000/edit_profile/', {
+          headers: {
+            'Authorization': `Token ${authToken}`
+            }
+      });
+// Endpoint to fetch user data using user ID
+        // Decrypt card details and set them in the state
+        const decryptedCardNumber = response.data.credit_card_number;
+        const decryptedExpirationDate = response.data.credit_card_expiry;
+        const decryptedCVV = response.data.credit_card_cvv;
+        setCardNumber(decryptedCardNumber);
+        setExpirationDate(decryptedExpirationDate);
+        setCVV(decryptedCVV);
+      } catch (error) {
+        console.error('Error fetching user data:', error);
+      }
+    };
+
+    fetchUserData();
+  }, []);
 
   const applyDiscount = (category, price) => {
     if (category === 'CHILD' || category === 'SENIOR') {
@@ -68,13 +108,29 @@ function OrderSummary() {
     setOrder(order.map(ticket => (ticket.id === id ? { ...ticket, category } : ticket)));
   };
 
-  const calculateTotal = () => {
-    return order.reduce((total, ticket) => total + parseFloat(applyDiscount(ticket.category, ticket.price)), 0);
+  const handleApplyPromoCode = async () => {
+    try {
+      const response = await axios.post('http://127.0.0.1:8000/validate-promo-code/', {
+        promo_code: promoCode,
+        total_amount: totalAmount // Send total amount to backend
+      });
+      setDiscount(response.data.discount);
+      setPromoCodeMessage(`Promo code applied successfully. Discount: $${response.data.discount.toFixed(2)}`);
+    } catch (error) {
+      console.error('Error validating promo code:', error);
+      setDiscount(0); // Set discount to 0 if promo code is invalid
+      setPromoCodeMessage('Invalid promo code. Please try again.');
+    }
   };
   
 
   const handleSubmit = async () => {
     try {
+      const authToken = localStorage.getItem('authToken'); // Retrieve authentication token from local storage
+        console.log(authToken);
+        if (!authToken) {
+          throw new Error('Authentication token not found in localStorage');
+          }
       const seatsData = order.map(ticket => ({
         seat: ticket.seat,
         category: ticket.category
@@ -83,7 +139,25 @@ function OrderSummary() {
         seats: seatsData,
       });
       console.log(response.data);
-      navigate(`/`) // Redirect to confirmation page after successful booking
+      const response1 = await axios.post(`http://127.0.0.1:8000/book/`, {
+      show_id: showId,
+      total_amount: totalAmount
+    }, {
+      headers: {
+        'Authorization': `Token ${authToken}`
+      }
+    });
+    console.log(response1.data)
+    navigate(`/OrderConfirmationPage`, {
+      state: {
+        confirmationDetails: {
+          movieName: showDetails.movie,
+          time: showDetails.startTime, // Assuming startTime contains both date and time
+          totalTicketPrice: totalAmount.toFixed(2), // Assuming totalAmount contains the total ticket price
+          bookedSeats: order.map(ticket => ticket.seat).join(', ') // Assuming order contains booked seats
+        }
+      }
+    },[location.state, navigate]); // Redirect to confirmation page after successful booking
     } catch (error) {
       console.error('Error booking seats:', error);
     }
@@ -116,13 +190,27 @@ function OrderSummary() {
                   </select>
                 </td>
                 <td>${applyDiscount(ticket.category, ticket.price).toFixed(2)}</td>
-                
               </tr>
             ))}
           </tbody>
         </table>
-        <div>Total: ${calculateTotal().toFixed(2)}</div>
-        <button onClick={handleSubmit}>Confirm Order</button>
+        
+        <div style={{ marginTop: 'auto', fontSize: '30px' }}>Total: ${totalAmount.toFixed(2)}</div>
+        <div className='promocode'>
+          <label htmlFor="promoCode">Enter Promo Code:  </label>
+          <input type="text" id="promoCode" style={{width:'auto'}} value={promoCode} onChange={e => setPromoCode(e.target.value)} />
+          <button onClick={handleApplyPromoCode}>Apply</button>
+        </div>
+        {promoCodeMessage && <p style={{ color: 'green' }}>{promoCodeMessage}</p>}
+        <h3>Card Information</h3>
+        <div className='input-list'>
+            
+            <input type="text" placeholder="Card Number"  value = {cardNumber}/>
+            <input type="date" placeholder="Expiration Date" value={expirationDate} />
+            <input type="text" placeholder="CVV" value={cvv}/>
+        </div>
+        
+        <button onClick={handleSubmit} style={{ 'margin-top': ' auto' }}>Confirm Order</button>
       </div>
     </>
   );

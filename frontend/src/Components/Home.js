@@ -1,133 +1,77 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import axios from 'axios';
 import Navbar from './Navbar';
+import Slider from 'react-slick';
+import "slick-carousel/slick/slick.css";
+import "slick-carousel/slick/slick-theme.css";
+
 function MovieList() {
   const [movies, setMovies] = useState([]);
-  const [nowShowing, setNowShowing] = useState([]);
-  const [upcoming, setUpcoming] = useState([]);
   const [selectedGenre, setSelectedGenre] = useState('all');
   const [searchTerm, setSearchTerm] = useState('');
-  
 
-  
-
-  
   useEffect(() => {
-    async function fetchMovies() {
-      try {
-        const response = await axios.get('http://127.0.0.1:8000/');
-        setMovies(response.data);
-        categorizeMovies(response.data); // Categorize movies into "Now Showing" and "Upcoming"
-      } catch (error) {
-        console.error('Error fetching movies:', error);
-      }
-    }
+    // Trigger the initial fetch when the component mounts.
     fetchMovies();
   }, []);
 
+  const fetchMovies = useCallback( async () => {
+    try {
+      // Fetch movies with potential filters applied.
+      // It's essential your backend endpoint supports these query parameters.
+      // If not, you may need to adjust your backend to support filtering or
+      // handle filtering client-side after fetching all movies.
+      const response = await axios.get('http://127.0.0.1:8000/', {
+        params: {
+          genre: selectedGenre,
+          search: searchTerm
+        }
+      });
+      setMovies(response.data);
+    } catch (error) {
+      console.error('Error fetching movies:', error);
+    }
+  },[selectedGenre, searchTerm]);
+
   useEffect(() => {
-    categorizeMovies(movies);
-  }, [movies]);
+    // This effect ensures that a fetch is performed whenever
+    // the selectedGenre or searchTerm changes.
+    fetchMovies();
+  },[fetchMovies] );
 
-  useEffect(() => {
-    filterMovies();
-  }, [selectedGenre, searchTerm,movies]);
-
-  const categorizeMovies = (movies) => {
-    const currentDate = new Date();
-    const nowShowingMovies = movies.filter(movie => new Date(movie.release_date) <= currentDate);
-    const upcomingMovies = movies.filter(movie => new Date(movie.release_date) > currentDate);
-    setNowShowing(nowShowingMovies);
-    setUpcoming(upcomingMovies);
+  const handleGenreChange = (event) => {
+    setSelectedGenre(event.target.value);
   };
 
-  const filterMovies = () => {
-    let filteredNowShowing = [...movies];
-    let filteredUpcoming = [...movies];
-    const currentDate = new Date();
-  
-    if (selectedGenre !== 'all') {
-      filteredNowShowing = nowShowing.filter(movie => 
-        movie.genre.toLowerCase().includes(selectedGenre) && 
-        new Date(movie.release_date) <= currentDate
-      );
-      filteredUpcoming = upcoming.filter(movie => 
-        movie.genre.toLowerCase().includes(selectedGenre) && 
-        new Date(movie.release_date) > currentDate
-      );
-    } else {
-      filteredNowShowing = nowShowing.filter(movie => 
-        new Date(movie.release_date) <= currentDate
-      );
-      filteredUpcoming = upcoming.filter(movie => 
-        new Date(movie.release_date) > currentDate
-      );
-    }
-  
-    if (searchTerm) {
-      filteredNowShowing = filteredNowShowing.filter(movie => 
-        movie.title.toLowerCase().includes(searchTerm) && 
-        new Date(movie.release_date) <= currentDate
-      );
-      filteredUpcoming = filteredUpcoming.filter(movie => 
-        movie.title.toLowerCase().includes(searchTerm) && 
-        new Date(movie.release_date) > currentDate
-      );
-    }
-  
-    setNowShowing(filteredNowShowing);
-    setUpcoming(filteredUpcoming);
-  };
-  
-
-  const handleGenreFilter = (event) => {
-    setSelectedGenre(event.target.value.toLowerCase());
+  const handleSearchChange = (event) => {
+    setSearchTerm(event.target.value);
   };
 
-  const handleSearch = async (event) => {
-    const value = event.target.value.toLowerCase();
-    setSearchTerm(value);
-  
-    // If the search term becomes empty, refetch movies from the database
-    if (value === '') {
-      try {
-        const response = await axios.get('http://127.0.0.1:8000/');
-        setMovies(response.data);
-      } catch (error) {
-        console.error('Error fetching movies:', error);
-      }
-    }
-  };
-  
+  // Split movies into Now Showing and Upcoming based on their release dates
+  const currentDate = new Date();
+  const nowShowing = movies.filter(movie => new Date(movie.release_date) <= currentDate);
+  const upcoming = movies.filter(movie => new Date(movie.release_date) > currentDate);
 
+  // const sliderSettings = {
+  //   dots: true,
+  //   infinite: false,
+  //   speed: 500,
+  //   slidesToShow: 6,
+  //   slidesToScroll: 4,
+  //   responsive: [
+  //     { breakpoint: 1024, settings: { slidesToShow: 3, slidesToScroll: 3 }},
+  //     { breakpoint: 600, settings: { slidesToShow: 2, slidesToScroll: 2 }},
+  //     { breakpoint: 480, settings: { slidesToShow: 1, slidesToScroll: 1 }},
+  //   ],
+  // };
 
-  return (
-    <div >
+  // Helper function to render movie cards
+  const renderMovies = (moviesList) => (
+    moviesList.length > 0 ? (
       
-      <Navbar />
-      <div className="home" >
-      <div style={{ textAlign: 'right' }}>
-      <select onChange={handleGenreFilter} value={selectedGenre}>
-        <option value="all">All Genres</option>
-        <option value="action">Action</option>
-        <option value="comedy">Comedy</option>
-        <option value="drama">Drama</option>
-        <option value="horror">Horror</option>
-        <option value="romance">Romance</option>
-        <option value="science fiction">Science Fiction</option>
-      </select>
-
-      {/* <input style={{ textAlign: 'center' }} type="text" onChange={handleSearch} value={searchTerm} placeholder="Search by movie title" /> */}
-      
-      <input style={{ textAlign: 'center' }} type="text" onChange={handleSearch} value={searchTerm} placeholder="Search by movie title" />
-      </div>
-      
-      <h2>Now Showing</h2>
-      {nowShowing.length > 0 ? (
-        
-        <div className='movie-container'>
+      <div className='movie-container'>
           
-          {nowShowing.map(movie => (
+          {moviesList.map(movie => (
             <a href={`/movies/${movie.id}`} className='movie-card' key={movie.id} style={{ backgroundImage: `url(http://127.0.0.1:8000${movie.image})` }} data-title={movie.title}>
             <div className='movie-card' style={{ width: '150px', height: '200px', backgroundColor: 'gray', display: 'flex', justifyContent: 'center', alignItems: 'center', color: 'white' }}
             key={movie.id}>
@@ -136,30 +80,56 @@ function MovieList() {
           </a>
           ))}
         </div>
-      
-      ) : (
-        <p>No movies available</p>
-      )}
-
-      <h2>Upcoming Movies</h2>
-      {upcoming.length > 0 ? (
-        <div className='movie-container'>
-          {upcoming.map(movie => (
-            <a href={`/movies/${movie.id}`} className='movie-card' key={movie.id} style={{ backgroundImage: `url(http://127.0.0.1:8000${movie.image})` }} data-title={movie.title}>
-            <div  className='movie-card'  style={{ width: '150px', height: '200px', backgroundColor: 'gray', display: 'flex', justifyContent: 'center', alignItems: 'center', color: 'white' }}
-             key={movie.id}>
-            <img height="50px" width="50px" src={`http://127.0.0.1:8000${movie.image}`} alt="Movie Poster" /><br />
-
-          </div> 
-          </a>
-          ))}
+    ) : (
+      <p style={{color:'white','margin-left':'25px'}}>No movies available.</p>
+    )
+  );
+  // const renderMoviesWithSlider = (moviesList) => (
+  //   moviesList.length > 0 ? (
+  //     <Slider {...sliderSettings}>
+  //       {moviesList.map(movie => (
+  //         <div key={movie.id} className='movie-slide'>
+  //           <a href={`/movies/${movie.id}`} className='movie-card' data-title={movie.title}>
+  //             <div className='movie-card' style={{ backgroundImage: `url(http://127.0.0.1:8000${movie.image})`, width: '100%', height: '100%', display: 'flex', justifyContent: 'center', alignItems: 'center', color: 'white' }}>
+  //               <img src={`http://127.0.0.1:8000${movie.image}`} alt="Movie Poster" style={{ maxHeight: '200px' }} />
+  //             </div>
+  //           </a>
+  //         </div>
+  //       ))}
+  //     </Slider>
+  //   ) : (
+  //     <p style={{color: 'white', marginLeft: '25px'}}>No movies available.</p>
+  //   )
+  // );
+  return (
+    <div>
+      <Navbar />
+      <div className="filter-section" style={{ textAlign: 'right' }}>
+        <select onChange={handleGenreChange} value={selectedGenre}>
+          <option value="all">All Genres</option>
+          <option value="action">Action</option>
+          <option value="comedy">Comedy</option>
+          <option value="drama">Drama</option>
+          <option value="horror">Horror</option>
+          <option value="romance">Romance</option>
+          <option value="sci-fi">Sci-Fi</option>
+          {/* Add more genres as needed */}
+        </select>
+        <input
+          type="text"
+          onChange={handleSearchChange}
+          value={searchTerm}
+          placeholder="Search by movie title"
+          style={{ marginLeft: '10px' }}
+        />
       </div>
-      ) : (
-        <p>No movies available</p>
-      )}
+      <div className="movies-section">
+        <h2 style={{color:'white','margin-left':'25px'}}>Now Showing</h2>
+        {renderMovies(nowShowing)}
+        <h2 style={{color:'white','margin-left':'25px'}}>Upcoming Movies</h2>
+        {renderMovies(upcoming)}
       </div>
     </div>
-    
   );
 }
 

@@ -24,6 +24,10 @@ code {
   height: fit-content;
 }
 
+.movie-section h2{
+  color: white;
+}
+
 .movie-container {
   display: flex;
   flex-direction: row;
@@ -107,6 +111,8 @@ input[type="text"]::placeholder {
 select:hover, select:focus, input[type="text"]:hover, input[type="text"]:focus {
   border-color: #666;
 }
+
+
 
 /*-----------------------------------movieInd section below-----------------------------*/
 .movie-details {
@@ -407,93 +413,8 @@ select:hover, select:focus, input[type="text"]:hover, input[type="text"]:focus {
   color: white;
 }
 
-/*--------------------------Order Summary Page-----------------*/
-.order-summary-page{
-  align-items: center;
-  background-color: #002147;
-  padding-bottom: 45%;
-}
 
-.ordersummary-page h1 {
-  font-size: 2.5rem;
-  font-weight: bold;
-  margin-bottom: 1rem;
-  align-items: center;
-}
 
-.order-summary-title {
-  color: white;
-  text-align: center;
-}
-
-.order-summary-page table {
-  width: 100%;
-  border-collapse: collapse;
-  margin-bottom: 1rem;
-}
-
-.order-summary-page th,
-.order-summary-page td {
-  padding: 0.5rem;
-  border: 1px solid #ddd;
-  text-align: left;
-}
-
-.order-summary-page th {
-  background-color: #ddd;
-}
-
-.order-summary-page button {
-  padding: 0.5rem 1rem;
-  background-color: #4CAF50;
-  color: white;
-  border: none;
-  border-radius: 0.25rem;
-  cursor: pointer;
-  margin-right: 0.5rem;
-}
-
-.order-summary-page button:hover {
-  background-color: #3e8e41;
-}
-
-.order-summary-page .checkout-button {
-  background-color: #fff;
-  color: #333;
-  padding: 10px 20px;
-  border: none;
-  border-radius: 5px;
-  cursor: pointer;
-  margin-top: 50px;
-  margin-bottom: 10px;
-  margin-left: 89%;
-}
-
-.order-summary-page .checkout-button:hover {
-  background-color: #ccc;
-}
-
-/*-------------------------------BookMovies Section Below------------------------*/
-.book-moviesform {
-  background-color: #002147;
-  display: flex;
-  flex-direction: column;
-  padding: 10px;
-  align-items: center;
-  justify-content: center; 
-  height: 90.5vh;
-  color: white;
-}
-
-.confirm-btn {
-  background-color: #fff;
-  color: #333;
-  padding: 10px 20px;
-  border: none;
-  border-radius: 5px;
-  cursor: pointer;
-  margin-top: 20px;
-}
 
 /*-------------------------------OrderSummary Section Below------------------------*/
 
@@ -504,12 +425,16 @@ select:hover, select:focus, input[type="text"]:hover, input[type="text"]:focus {
   padding: 10px;
   align-items: center;
   justify-content: center; 
-  height: 60.5vh;
+  height: 110.5vh;
   color: white;
 }
 
 .order-summary button {
   margin: 5px;
+}
+
+.promocode {
+  margin-top: auto;
 }
 
 /*--------------------------Check Out Page-----------------*/
@@ -591,7 +516,9 @@ input[type="text"] {
   align-items: center;
   justify-content: center;
   flex-direction: column;
-
+  overflow-y: hidden;
+  display: flex;
+  text-align: center;
 }
 
 .order-confirmation h1 {
@@ -621,7 +548,6 @@ input[type="text"] {
   cursor: pointer;
   transition: background-color 0.3s ease;
   text-align: center;
-  margin-left: 43%;
 }
 
 .go-back-button:hover {
