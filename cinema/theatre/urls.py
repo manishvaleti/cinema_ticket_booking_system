@@ -18,4 +18,7 @@ urlpatterns = [
     path('categories/',get_categories,name='categories'),
     path('validate-promo-code/',validate_promo_code,name='promocode'),
     path('book/',create_booking,name='book'),
+    path('order_history/',OrderHistoryView.as_view(),name='order_history'),
+    path('cancelBooking/<int:booking_id>/', cancel_booking,name='cancel_booking'),
+    path('bookingcred/<int:booking_id>/',booking_cred,name='bookingcred'),
 ]

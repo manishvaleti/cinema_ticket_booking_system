@@ -103,7 +103,7 @@ const SeatMap = () => {
           </div>
         </div>
         <div className="navigation">
-          <button onClick={handleProceedClick} style={{ margin: 'auto' }} className="next-page-button">
+          <button onClick={handleProceedClick} style={{ backgroundColor: '#fff', color: '#333', padding: '10px 20px', border: 'none', borderRadius: '5px', cursor: 'pointer', marginTop: '20px' }} className="next-page-button">
             Proceed to Next Page
           </button>
         </div>

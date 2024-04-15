@@ -22,13 +22,23 @@ function OrderSummary() {
     const fetchShowDetails = async () => {
       try {
         const response = await axios.get(`http://127.0.0.1:8000/shows/${showId}/`);
-        const startTime = new Date(response.data.start_time);
-        const formattedStartTime = startTime.toLocaleTimeString([], {year: 'numeric', month: 'numeric', day: 'numeric', hour: '2-digit', minute: '2-digit' }); // This will format the date and time according to the locale
+
+        const formatTime = (timestamp) => {
+          return new Date(timestamp).toLocaleString('en-US', {
+              timeZone: 'UTC',
+              year: 'numeric',
+              month: 'short',
+              day: 'numeric',
+              hour: 'numeric',
+              minute: 'numeric',
+          });
+      };
   
         setShowDetails({
           price: response.data.price,
-          startTime: formattedStartTime,
+          startTime: formatTime(response.data.start_time),
           movie: response.data.title,
+          screen: response.data.screen,
         });
 
         const initialOrder = selectedSeats.map((seat, index) => ({
@@ -135,13 +145,19 @@ function OrderSummary() {
         seat: ticket.seat,
         category: ticket.category
       }));
+      const seatNumbers = order.map(ticket => ticket.seat);
       const response = await axios.put(`http://127.0.0.1:8000/seat-booking/${showId}/`, {
         seats: seatsData,
       });
       console.log(response.data);
       const response1 = await axios.post(`http://127.0.0.1:8000/book/`, {
       show_id: showId,
-      total_amount: totalAmount
+      total_amount: totalAmount,
+      seat_numbers: seatNumbers,
+      credit_card_number: cardNumber,
+      cvv: cvv,
+      expiry_date: expirationDate
+      
     }, {
       headers: {
         'Authorization': `Token ${authToken}`
@@ -154,7 +170,8 @@ function OrderSummary() {
           movieName: showDetails.movie,
           time: showDetails.startTime, // Assuming startTime contains both date and time
           totalTicketPrice: totalAmount.toFixed(2), // Assuming totalAmount contains the total ticket price
-          bookedSeats: order.map(ticket => ticket.seat).join(', ') // Assuming order contains booked seats
+          bookedSeats: order.map(ticket => ticket.seat).join(', '),
+          screen: showDetails.screen
         }
       }
     },[location.state, navigate]); // Redirect to confirmation page after successful booking
@@ -169,6 +186,7 @@ function OrderSummary() {
       <div className="order-summary">
         <h1>Order Summary</h1>
         <h3>{showDetails.movie}</h3>
+        <h4>{showDetails.screen}</h4>
         <h5>{showDetails.startTime}</h5>
         <table>
           <thead>
@@ -199,18 +217,36 @@ function OrderSummary() {
         <div className='promocode'>
           <label htmlFor="promoCode">Enter Promo Code:  </label>
           <input type="text" id="promoCode" style={{width:'auto'}} value={promoCode} onChange={e => setPromoCode(e.target.value)} />
-          <button onClick={handleApplyPromoCode}>Apply</button>
+          <button onClick={handleApplyPromoCode} style={{ backgroundColor: '#fff', color: '#333', padding: '10px 20px', border: 'none', borderRadius: '5px', cursor: 'pointer', marginTop: '20px' }}>Apply</button>
         </div>
         {promoCodeMessage && <p style={{ color: 'green' }}>{promoCodeMessage}</p>}
         <h3>Card Information</h3>
         <div className='input-list'>
             
-            <input type="text" placeholder="Card Number"  value = {cardNumber}/>
-            <input type="date" placeholder="Expiration Date" value={expirationDate} />
-            <input type="text" placeholder="CVV" value={cvv}/>
+          <input 
+            type="text" 
+            name="creditcardnumber" 
+            placeholder="Card Number"  
+            value={cardNumber}
+            onChange={e => setCardNumber(e.target.value)} // Update cardNumber state on change
+          />
+          <input 
+            type="date" 
+            name="expirydate" 
+            placeholder="Expiration Date" 
+            value={expirationDate}
+            onChange={e => setExpirationDate(e.target.value)} // Update expirationDate state on change
+          />
+          <input 
+            type="text" 
+            name="cvv" 
+            placeholder="CVV" 
+            value={cvv}
+            onChange={e => setCVV(e.target.value)} // Update cvv state on change
+          />
         </div>
         
-        <button onClick={handleSubmit} style={{ 'margin-top': ' auto' }}>Confirm Order</button>
+        <button onClick={handleSubmit} style={{ backgroundColor: '#fff', color: '#333', padding: '10px 20px', border: 'none', borderRadius: '5px', cursor: 'pointer', marginTop: '20px' }}>Confirm Order</button>
       </div>
     </>
   );

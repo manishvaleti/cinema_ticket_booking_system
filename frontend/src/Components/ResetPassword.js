@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import axios from 'axios';
 import {useNavigate} from 'react-router-dom';
+import Navbar from './Navbar';
 const ResetPassword = () => {
     const [username, setUsername] = useState('');
     const [tempPassword, setTempPassword] = useState('');
@@ -26,6 +27,8 @@ const ResetPassword = () => {
     };
 
     return (
+        <>
+        <Navbar />
         <div className='resetPassword'>
             <h2>Reset Password</h2>
             <form onSubmit={handleSubmit}>
@@ -39,6 +42,7 @@ const ResetPassword = () => {
             {message && <p>{message}</p>}
             {error && <p style={{ color: 'red' }}>{error}</p>}
         </div>
+        </>
     );
 };
 

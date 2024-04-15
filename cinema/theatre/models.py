@@ -1,3 +1,4 @@
+from django.conf import settings
 from django.db import models
 from django.contrib.auth.models import AbstractUser, Group, Permission
 from django.db import models
@@ -8,7 +9,9 @@ from Crypto.Util.Padding import pad, unpad
 import base64
 from django.utils import timezone
 from django.utils.formats import date_format
-
+from django.core.exceptions import ValidationError
+from cryptography.fernet import Fernet
+# from django.db.models import Q
 class User(AbstractUser):
     photo = models.ImageField(upload_to='profile_photos/', null=True, blank=True, default='default_image.png')
     address = models.CharField(max_length=255, null=True, blank=True)
@@ -74,13 +77,29 @@ class Show(models.Model):
     movie = models.ForeignKey(Movie, on_delete=models.CASCADE)
     screen = models.ForeignKey(Screen, on_delete=models.CASCADE)
     start_time = models.DateTimeField()
-    end_time = models.DateTimeField()
     price = models.DecimalField(max_digits=8, decimal_places=2)
 
     def __str__(self):
-        # Format the start_time. You can adjust the format string as needed.
         start_time_str = date_format(self.start_time, "SHORT_DATETIME_FORMAT")
         return f"{self.movie.title} @ {self.screen.name} - {start_time_str}"
+
+    def clean(self):
+        if self.start_time and self.screen:
+            # Calculate end time of the show (3 hours after start time)
+            duration = timezone.timedelta(hours=3)
+            end_time = self.start_time + duration
+
+            # Check for any conflicting shows scheduled in the same screen
+            conflicting_shows = Show.objects.filter(
+                screen=self.screen,
+                start_time__lt=end_time,
+                start_time__gte=self.start_time - duration
+            ).exclude(pk=self.pk)
+            
+            if conflicting_shows.exists():
+                # If there are conflicting shows, raise a validation error
+                raise ValidationError("Another movie is scheduled within the next 3 hours in the same screen.")
+        
    
 
 class Seat(models.Model):
@@ -103,6 +122,44 @@ class Booking(models.Model):
     date = models.DateField(default=timezone.now)
     booking_time = models.DateTimeField(auto_now_add=True)
     total_amount = models.DecimalField(max_digits=8, decimal_places=2)
+    seats = models.ManyToManyField(Seat, related_name='bookings')
+    reference_number = models.CharField(max_length=20, default='none')
+    encrypted_credit_card_number = models.BinaryField(default=b'none')  # Encrypted credit card number
+    encrypted_cvv = models.BinaryField(default=b'none')  # Encrypted CVV
+    encrypted_expiry_date = models.BinaryField(default=b'none')
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self._cipher_suite = None
+
+    @property
+    def cipher_suite(self):
+        if self._cipher_suite is None:
+            # Initialize the cipher suite if it's not already set
+            self._cipher_suite = Fernet(settings.FERNET_KEY)
+        return self._cipher_suite
+
+    def set_credit_card_number(self, credit_card_number):
+        self.encrypted_credit_card_number = self.cipher_suite.encrypt(credit_card_number.encode())
+
+    def get_credit_card_number(self):
+        return self.cipher_suite.decrypt(self.encrypted_credit_card_number).decode()
+
+    def set_cvv(self, cvv, fernet_key):
+        cipher_suite = Fernet(fernet_key)
+        self.encrypted_cvv = cipher_suite.encrypt(cvv.encode())
+
+    def get_cvv(self, fernet_key):
+        cipher_suite = Fernet(fernet_key)
+        return cipher_suite.decrypt(self.encrypted_cvv).decode()
+    
+    def set_expiry_date(self, expiry_date, fernet_key):
+        cipher_suite = Fernet(fernet_key)
+        self.encrypted_expiry_date = cipher_suite.encrypt(expiry_date.encode())
+
+    def get_expiry_date(self, fernet_key):
+        cipher_suite = Fernet(fernet_key)
+        return cipher_suite.decrypt(self.encrypted_expiry_date).decode() 
 
 class PromoCode(models.Model):
     DISCOUNT_CHOICES = [

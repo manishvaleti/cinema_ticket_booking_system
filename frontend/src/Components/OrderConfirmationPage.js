@@ -5,7 +5,7 @@ import Navbar from './Navbar';
 function OrderConfirmationPage() {
   const location = useLocation();
   const { confirmationDetails } = location.state || {};
-  const { movieName, time, totalTicketPrice, bookedSeats } = confirmationDetails || {};
+  const { movieName, time, totalTicketPrice, bookedSeats, screen } = confirmationDetails || {};
 
   return (
     <>
@@ -15,7 +15,7 @@ function OrderConfirmationPage() {
         <p>
           Thank you for booking tickets to {movieName}. 
           <br />
-          Your screening is scheduled for  {time}. 
+          Your screening is scheduled for  {time} in {screen}
           <br />
           Your total payment was {totalTicketPrice}. 
           <br />

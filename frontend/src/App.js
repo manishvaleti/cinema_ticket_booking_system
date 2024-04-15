@@ -13,6 +13,7 @@ import ChangePassword from './Components/changePassword';
 import { AuthProvider } from './Components/AuthContext';
 import ForgotPassword from './Components/ForgotPassword';
 import ResetPassword from './Components/ResetPassword';
+import OrderHistory from './Components/orderHistory';
 
 function App() {
   return (
@@ -31,6 +32,7 @@ function App() {
         <Route path="/SeatMap/:showId/" element={<SeatMap/>}/>
         <Route path="/forgotPassword" element={<ForgotPassword/>}/>
         <Route path="/resetPassword" element={<ResetPassword/>}/>
+        <Route path="/orderHistory" element={<OrderHistory/>}/>
         {/* Add more routes for other pages */}
       </Routes>
     </Router>

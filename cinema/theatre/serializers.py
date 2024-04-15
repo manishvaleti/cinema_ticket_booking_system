@@ -10,7 +10,7 @@ class UserSerializer(serializers.ModelSerializer):
     promotions = serializers.BooleanField(default=False)
     class Meta:
         model = User
-        fields = ['id', 'first_name','last_name','username', 'email', 'password', 'address', 'phone_number', 'photo', 'credit_card_number', 'credit_card_expiry', 'credit_card_cvv','promotions']
+        fields = ['id', 'first_name','last_name','username', 'email', 'password', 'address', 'phone_number','photo', 'credit_card_number', 'credit_card_expiry', 'credit_card_cvv','promotions']
         extra_kwargs = {
             'password': {'write_only': True},  # To ensure password is write-only
             'id': {'read_only': True},  # To ensure id is read-only
@@ -19,7 +19,13 @@ class UserSerializer(serializers.ModelSerializer):
         }
 
     def create(self, validated_data):
+        photo = validated_data.pop('photo', None)
         user = User.objects.create_user(**validated_data)
+
+        # If a photo is provided, set it for the user
+        if photo:
+            user.photo = photo
+            user.save()
         subject = 'Welcome to CinemaVerse'
         message = 'Thank you for registering with us.'
         email_from = settings.EMAIL_HOST_USER
@@ -37,13 +43,27 @@ class BookingSerializer(serializers.ModelSerializer):
         model = Booking
         fields = ['id', 'user', 'show', 'total_amount']
 
+class ScreenSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Screen
+        fields = '__all__'
 
 class ShowSerializer(serializers.ModelSerializer):
+    screen = ScreenSerializer()
+    movie = MovieSerializer()
     class Meta:
         model = Show
-        fields = ['id', 'movie', 'screen', 'start_time', 'end_time', 'price']
+        fields = ['id', 'movie', 'screen', 'start_time', 'price']
 
 class SeatSerializer(serializers.ModelSerializer):
     class Meta:
         model = Seat
         fields = ('id', 'show', 'seatNo', 'is_booked','category')
+
+class BookingHistory(serializers.ModelSerializer):
+    
+    show = ShowSerializer()
+    seats = SeatSerializer(many=True)
+    class Meta:
+        model = Booking
+        fields = '__all__'

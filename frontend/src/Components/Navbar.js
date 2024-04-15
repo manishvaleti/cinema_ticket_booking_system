@@ -6,6 +6,7 @@ import { CgProfile } from "react-icons/cg";
 import { IoKey } from "react-icons/io5";
 import { useAuth } from './AuthContext'; // Adjust the import path as necessary
 import axios from 'axios';
+import { FaHistory } from "react-icons/fa";
 
 function Navbar() {
   const navigate = useNavigate();
@@ -66,6 +67,7 @@ function Navbar() {
       {isLoggedIn && isDropdownOpen && ( // Show dropdown when isLoggedIn is true
         <div className='dropdown-menu'>
           <ul>
+            <DropDownItem icon={<FaHistory />} text={'  Order History'} onClick={() => { navigate('/orderHistory'); setIsDropdownOpen(false); }} />
             <DropDownItem icon={<IoKey />} text={'  Change Password'} onClick={() => { navigate('/changePassword'); setIsDropdownOpen(false); }} />
             <DropDownItem icon={<FaPencilAlt />} text={'  Edit Profile'} onClick={() => { navigate('/EditProfile',{ user }); setIsDropdownOpen(false); }} />
             <DropDownItem icon={<GiPadlock />} text={'  Logout'} onClick={handleLogout} />

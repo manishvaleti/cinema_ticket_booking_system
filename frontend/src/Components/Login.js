@@ -43,23 +43,29 @@ function Login() {
             console.error('CSRF token not available.');
             return;
         }
-
+    
         try {
             const response = await axios.post('http://127.0.0.1:8000/login/', formData, {
                 headers: {
                     'X-CSRFToken': csrfToken,
                 },
             });
-            const authToken = response.data.token // Extract authentication token from response headers
-
+            const userData = response.data;
+    
+            if (!userData.is_active) {
+                alert('Your account is inactive. Please contact Cinemaverse at contact@cinemaverse.com.');
+                return;
+            }
+    
+            // Extract authentication token from response headers
+            const authToken = response.data.token;
             // Store the authentication token securely, for example in localStorage
             localStorage.setItem('authToken', authToken);
             const decodedToken = jwtDecode(authToken);
-
-            console.log(decodedToken)
-            const userData = response.data;
+            console.log(decodedToken);
+    
             login(userData.is_active);
-
+    
             if (userData.is_superuser) {
                 window.location.href = 'http://127.0.0.1:8000/admin/';
             } else {
@@ -68,16 +74,22 @@ function Login() {
         } catch (error) {
             console.error('Error:', error);
             if (error.response && error.response.status === 401) {
-                alert('Invalid credentials'); 
-                setFormData({
-                    username: '',
-                    password: ''
-                });
+                // if (error.response.data.detail === 'Invalid credentials') {
+                //     alert('Invalid credentials');
+                // } else if (error.response.data.detail === 'Your account is inactive. Please contact Cinemaverse at contact@cinemaverse.com.') {
+                //     alert('Your account is inactive. Please contact Cinemaverse at contact@cinemaverse.com.');
+                // } else {
+                //     // Handle other types of authentication errors
+                //     console.error('Authentication error:', error.response.data.detail);
+                // }
+                alert(error.response.data.detail);
             } else {
                 // Optionally handle other types of errors
+                console.error('Unexpected error:', error);
             }
         }
     };
+    
 
     return (
         <>

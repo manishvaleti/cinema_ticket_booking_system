@@ -69,17 +69,46 @@ function MovieList() {
   const renderMovies = (moviesList) => (
     moviesList.length > 0 ? (
       
-      <div className='movie-container'>
+      // <div className='movie-container'>
           
-          {moviesList.map(movie => (
-            <a href={`/movies/${movie.id}`} className='movie-card' key={movie.id} style={{ backgroundImage: `url(http://127.0.0.1:8000${movie.image})` }} data-title={movie.title}>
-            <div className='movie-card' style={{ width: '150px', height: '200px', backgroundColor: 'gray', display: 'flex', justifyContent: 'center', alignItems: 'center', color: 'white' }}
-            key={movie.id}>
-            <img height="50px" width="50px" src={`http://127.0.0.1:8000${movie.image}`} alt="Movie Poster" /><br />
-          </div> 
-          </a>
-          ))}
-        </div>
+      //     {moviesList.map(movie => (
+      //       <a href={`/movies/${movie.id}`} className='movie-card' key={movie.id} style={{ backgroundImage: `url(http://127.0.0.1:8000${movie.image})` }} data-title={movie.title}>
+      //       <div className='movie-card' style={{ width: '150px', height: '200px', backgroundColor: 'gray', display: 'flex', justifyContent: 'center', alignItems: 'center', color: 'white' }}
+      //       key={movie.id}>
+      //       <img height="50px" width="50px" src={`http://127.0.0.1:8000${movie.image}`} alt="Movie Poster" /><br />
+      //     </div> 
+      //     </a>
+      //     ))}
+      //   </div>
+      <div className='movie-container' style={{ display: 'flex', flexWrap: 'wrap' }}>
+  {moviesList.map(movie => (
+    <a href={`/movies/${movie.id}`} className='movie-card' key={movie.id} style={{ 
+      width: '90px', 
+      height: '300px', 
+      marginBottom: '20px', // Adjust spacing between movie cards
+      flex: '0 0 calc(16.666% - 20px)', // Adjust card width and add spacing
+      position: 'relative',
+      marginLeft: '45px', // Adjust spacing between movie cards
+      backgroundImage: `url(http://127.0.0.1:8000${movie.image})`
+    }} data-title={movie.title}>
+      <div className='movie-card' style={{ 
+        width: '100%', 
+        height: '100%', 
+        backgroundColor: 'gray', 
+        display: 'flex', 
+        justifyContent: 'center', 
+        alignItems: 'center', 
+        color: 'white',
+        backgroundImage: `url(http://127.0.0.1:8000${movie.image})`,
+        backgroundSize: 'cover',
+        backgroundPosition: 'center'
+      }} >
+        {/* {movie.title} */}
+      </div>
+    </a>
+  ))}
+</div>
+
     ) : (
       <p style={{color:'white','margin-left':'25px'}}>No movies available.</p>
     )
@@ -104,7 +133,7 @@ function MovieList() {
   return (
     <div>
       <Navbar />
-      <div className="filter-section" style={{ textAlign: 'right' }}>
+      <div className="filter-section" style={{ textAlign: 'right', paddingTop:'55px'}}>
         <select onChange={handleGenreChange} value={selectedGenre}>
           <option value="all">All Genres</option>
           <option value="action">Action</option>
@@ -124,10 +153,15 @@ function MovieList() {
         />
       </div>
       <div className="movies-section">
-        <h2 style={{color:'white','margin-left':'25px'}}>Now Showing</h2>
+      <h2 style={{color:'white','margin-left':'25px', fontSize: '30px'}}>Now Showing</h2>
+      <div className='carousel-wrapper'>
         {renderMovies(nowShowing)}
-        <h2 style={{color:'white','margin-left':'25px'}}>Upcoming Movies</h2>
+        </div>
+
+        <h2 style={{color:'white','margin-left':'25px', fontSize: '30px'}}>Upcoming Movies</h2>
+        <div className='carousel-wrapper'>
         {renderMovies(upcoming)}
+        </div>
       </div>
     </div>
   );

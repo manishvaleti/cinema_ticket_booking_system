@@ -18,7 +18,14 @@ from Crypto.Util.Padding import unpad
 from cryptography.hazmat.primitives import padding
 from cryptography.hazmat.primitives import hashes
 from cryptography.hazmat.primitives.ciphers import Cipher, algorithms, modes
+from django.template.loader import render_to_string
+from django.db.models.signals import post_save
+from django.dispatch import receiver
+from django.core.mail import send_mail
+import random
+import string
 
+fernet_key = bytes(settings.FERNET_KEY)
 
 @api_view(['POST'])
 def register_user(request):
@@ -74,11 +81,17 @@ def user_login(request):
     username = request.data.get('username')
     password = request.data.get('password')
     user = authenticate(request, username=username, password=password)
-    global t
-    t = user
-    if user is not None:
+    user1 = User.objects.filter(username=username).first()  # Get the user object if exists
+    
+    if user1 is None:
+        # User with the given username doesn't exist
+        return Response({'detail': 'Invalid credentials'}, status=status.HTTP_401_UNAUTHORIZED)
+    
+    if not user1.is_active:
+        # User account is inactive
+        return Response({'detail': 'Your account is inactive. Please contact Cinemaverse at cinemaaversee@gmail.com.'}, status=status.HTTP_401_UNAUTHORIZED)
+    if user is not None:  # Check if the user account is active
         login(request, user)
-
         # Generate or fetch the token associated with the user
         refresh = RefreshToken.for_user(user)
         token = str(refresh.access_token)
@@ -90,8 +103,10 @@ def user_login(request):
             # Include other additional fields here as needed
         }
         return Response(response_data, status=status.HTTP_200_OK)
+       
     else:
-        return Response(False, status=status.HTTP_401_UNAUTHORIZED)
+        # Authentication failed due to invalid credentials
+        return Response({'detail': 'Invalid credentials'}, status=status.HTTP_401_UNAUTHORIZED)
     
 @api_view(['POST'])
 def user_logout(request):
@@ -375,7 +390,8 @@ def get_price(request, show_id):
     try:
         show = Show.objects.get(pk=show_id)
         movie = show.movie
-        return Response({'price': show.price , 'title':movie.title , 'start_time':show.start_time}, status=status.HTTP_200_OK)
+        screen = show.screen
+        return Response({'price': show.price , 'title':movie.title , 'start_time':show.start_time, 'screen':screen.name}, status=status.HTTP_200_OK)
     except Show.DoesNotExist:
         return Response({'error': 'Show not found'}, status=status.HTTP_404_NOT_FOUND)
     
@@ -417,14 +433,30 @@ def create_booking(request):
             user_id = payload['user_id']
             show_id = request.data.get('show_id')
             total_amount = request.data.get('total_amount')
-            
-            booking = Booking.objects.create(
-            user_id=user_id,
-            show_id=show_id,
-            total_amount=total_amount
-        )
+            selected_seat_numbers = request.data.get('seat_numbers')  # List of selected seat numbers
+            credit_card_number = request.data.get('credit_card_number')  # Get credit card number
+            cvv = request.data.get('cvv')  # Get CVV
+            expiry_date = request.data.get('expiry_date')
 
-        # Serialize booking instance to send as response
+            booking_reference = ''.join(random.choices(string.ascii_uppercase + string.digits, k=8))
+            # Create booking instance
+            booking = Booking.objects.create(
+                user_id=user_id,
+                show_id=show_id,
+                total_amount=total_amount,
+                reference_number=booking_reference
+            )
+
+            booking.set_credit_card_number(credit_card_number)
+            booking.set_cvv(cvv, fernet_key)
+            booking.set_expiry_date(expiry_date, fernet_key)
+            # Save selected seats for the booking
+            for seat_number in selected_seat_numbers:
+                seat = Seat.objects.get(show_id=show_id, seatNo=seat_number)
+                booking.seats.add(seat)
+
+            send_email_confirmation(user_id, show_id, total_amount, selected_seat_numbers , booking_reference)
+            # Serialize booking instance to send as response
             serializer = BookingSerializer(booking)
             return Response(serializer.data)
         except jwt.ExpiredSignatureError:
@@ -439,7 +471,87 @@ def create_booking(request):
             # Handle user not found error
             return Response({'error': 'User not found'}, status=status.HTTP_404_NOT_FOUND)
         
-        # Create booking instance
-       
     else:
         return Response({'error': 'Method not allowed'}, status=405)
+
+def send_email_confirmation(user_id, show_id, total_amount, selected_seat_numbers, booking_reference):
+    try:
+        user = User.objects.get(pk=user_id)
+        show = Show.objects.get(pk=show_id)
+        
+
+        subject = 'Booking Confirmation'
+        message = f"Thank you for booking tickets for the show '{show.movie}'.\n"
+        message += f"With booking id '{booking_reference}'.\n"
+        message += f"showTime {show.start_time} at {show.screen}\n"
+        message += f"Total Amount: ${total_amount}\n"
+        message += f"Selected Seat Numbers: {', '.join(selected_seat_numbers)}\n"
+        message += "Enjoy the show!"
+
+        send_mail(subject, message, None, [user.email])
+    except Exception as e:
+        # Handle any exceptions that occur during email sending
+        print(f"Error sending email confirmation: {e}")
+
+@receiver(post_save, sender=PromoCode)
+def send_promo_code_email(sender, instance, created, **kwargs):
+    if created:
+        users_with_promotions = User.objects.filter(promotions=True)
+        for user in users_with_promotions:
+            subject = 'New Promo Code Available!'
+            message = render_to_string('/Users/manishvaleti/Desktop/SE Project/cinema_ticket_booking_system copy/cinema/theatre/templates/admin/email/promo_mail.html', {'user': user, 'promo_code': instance})
+            recipient_list = [user.email]  # Assuming you have an email field in your User model
+            send_mail(subject, message, None, recipient_list)
+
+
+class OrderHistoryView(APIView):
+    def get(self, request):
+        # Retrieve the JWT token from the request headers
+        token = request.headers.get('Authorization', '').split(' ')[1]
+
+        try:
+            # Decode and verify the JWT token
+            payload = jwt.decode(token, settings.SECRET_KEY, algorithms=['HS256'])
+            user_id = payload['user_id']
+
+            # Get the user's order history
+            bookings = Booking.objects.filter(user_id=user_id)
+            serializer = BookingHistory(bookings, many=True)
+            return Response(serializer.data)
+        except jwt.ExpiredSignatureError:
+            # Handle token expiration error
+            return Response({'error': 'Token has expired'}, status=status.HTTP_401_UNAUTHORIZED)
+        except jwt.InvalidTokenError:
+            # Handle invalid token error
+            return Response({'error': 'Invalid token'}, status=status.HTTP_401_UNAUTHORIZED)
+        except User.DoesNotExist:
+            # Handle user not found error
+            return Response({'error': 'User not found'}, status=status.HTTP_404_NOT_FOUND)
+        
+# views.py
+
+@api_view(['DELETE'])
+def cancel_booking(request, booking_id):
+    try:
+        booking = Booking.objects.get(pk=booking_id)
+    except Booking.DoesNotExist:
+        return Response({"error": "Booking not found"}, status=status.HTTP_404_NOT_FOUND)
+
+    if request.method == 'DELETE':
+        # Get the seats associated with the booking
+        seats = booking.seats.all()
+        
+        # Delete each seat individually
+        for seat in seats:
+            seat.delete()
+        
+        # Delete the booking
+        booking.delete()
+        
+        return Response({"message": "Booking cancelled successfully"}, status=status.HTTP_204_NO_CONTENT)
+
+@api_view(['get'])
+def booking_cred(request,booking_id):
+    booking = Booking.objects.get(pk=booking_id)
+    # k = booking
+    print(booking.get_credit_card_number())

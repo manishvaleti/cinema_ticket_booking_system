@@ -61,9 +61,18 @@ function extractYouTubeVideoId(url) {
       return acc;
     }, {});
     
+    const formatTime = (timeString) => {
+      const [hours, minutes] = timeString.split(':');
+      const today = new Date();
+      today.setHours(hours);
+      today.setMinutes(minutes);
+      return today.toLocaleString('en-US', {
+          hour: 'numeric',
+          minute: 'numeric',
+      });
+  };
 
     const handleShowSelection = (showId) => {
-      // Navigate to the seats page with the selected show ID
       navigate(`/SeatMap/${showId}`);
     };
   
@@ -106,7 +115,7 @@ function extractYouTubeVideoId(url) {
               <p><strong>Date:</strong> {date}</p>
               <div>
                 {timings.map(({time,id}, index) => (
-                  <button key={index} className="timing-button" onClick={() => handleShowSelection(id)}>{time}</button>
+                  <button key={index} className="timing-button" onClick={() => handleShowSelection(id)}>{formatTime(time)}</button>
                 ))}
               </div>
             </div>

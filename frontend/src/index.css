@@ -34,6 +34,7 @@ code {
   padding: 10px;
   border: red;
   border-radius: 20px;
+  position: relative;
 }
 
 .movie-card {
@@ -114,12 +115,16 @@ select:hover, select:focus, input[type="text"]:hover, input[type="text"]:focus {
 
 
 
+
+
+
 /*-----------------------------------movieInd section below-----------------------------*/
 .movie-details {
   padding: 20px;
   background-color: #002147;
   color: white;
   font-size: large;
+  padding-top: 60px;
 }
 
 .details-container {
@@ -171,6 +176,9 @@ select:hover, select:focus, input[type="text"]:hover, input[type="text"]:focus {
   background-color: #000;
   color: #fff;
   padding: 10px 0;
+  position: fixed;
+  width: 100%;
+  z-index: 1000;
 }
 
 .container {
@@ -303,6 +311,7 @@ select:hover, select:focus, input[type="text"]:hover, input[type="text"]:focus {
   align-items: center;
   justify-content: center; 
   height:90.5vh; 
+  padding-top: 100px;
 }
 
 .registration-form h1{
@@ -407,6 +416,7 @@ select:hover, select:focus, input[type="text"]:hover, input[type="text"]:focus {
   align-items: center;
   justify-content: center; 
   height:20.5vh;
+  padding-top: 100px;
 }
 
 .account-form h1{
@@ -425,7 +435,7 @@ select:hover, select:focus, input[type="text"]:hover, input[type="text"]:focus {
   padding: 10px;
   align-items: center;
   justify-content: center; 
-  height: 110.5vh;
+  padding-top: 50px;
   color: white;
 }
 
@@ -515,9 +525,9 @@ input[type="text"] {
   padding-bottom: 40%;
   align-items: center;
   justify-content: center;
-  flex-direction: column;
+  /* flex-direction: column;
   overflow-y: hidden;
-  display: flex;
+  display: flex; */
   text-align: center;
 }
 
@@ -562,7 +572,7 @@ input[type="text"] {
   display: flex;
   flex-direction: column;
   align-items: center;
-  margin: 20px;
+  padding-top: 100px;
 }
 
 .screen {
@@ -625,6 +635,7 @@ input[type="text"] {
   align-items: center;
   justify-content: center; 
   height:50.5vh; 
+  padding-top: 50px;
 }
 
 .changePassword button {
@@ -635,7 +646,7 @@ input[type="text"] {
   border-radius: 5px;
   cursor: pointer;
   margin-top: 20px;
-  width: 45%;
+  width: 60%;
   margin-left: auto;
   margin-right: auto;
 }
@@ -690,6 +701,7 @@ input[type="text"] {
   align-items: center;
   justify-content: center; 
   height:50.5vh; 
+  padding-top: 30px;
 }
 
 .resetPassword button {
@@ -708,3 +720,56 @@ input[type="text"] {
 .resetPassword h2{
   color: white;
 }
+
+
+/*-----------------------Order History-----------------*/
+
+.order-history-container {
+  display: flex;
+  margin-bottom: 100px;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  padding-top: 150px;
+}
+
+.card {
+  width: 80%;
+  padding: 20px;
+  border-radius: 10px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  background-color:#000;
+}
+
+.card table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.card th, td {
+  padding: 8px;
+  border-bottom: 1px solid black;
+  text-align: center;
+  color: white;
+}
+
+.card th {
+  background-color: black;
+  text-align: center;
+}
+
+.card h1{
+  text-align: center;
+  color: white;
+}
+
+.card button{
+  color:white;
+  background-color: red;
+  padding: 10px 20px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+
